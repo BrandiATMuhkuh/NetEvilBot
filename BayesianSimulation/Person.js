@@ -44,13 +44,44 @@ var Person = function (myName) {
      * Returns an array with probabilities.
      * @param {string} image Name of the image
      * @param {string} partnerName The partners name
+     * @return {array} A list of word probabilities
      */
     this.guess = function(image, partnerName){
         var i = {};
         i[image] = 1;
         i[partnerName] = 1;
-        console.log(this.myBrain.run(i));
+        return this.myBrain.run(i);
     };
+
+
+    /**
+     * The persons guess what it's partner used for an image.
+     * Returns only the name of the world with highest guess
+     * @param {string} image Name of the image
+     * @param {string} partnerName The partners name
+     * @return {string} the most probable word
+     */
+    this.guessFirst = function(image, partnerName){
+        var probs = this.guess(image, partnerName);
+
+        //find highest probable word
+        var word = null;
+        var probablity = null;
+        for(var pr in probs){
+
+            if(word == null){
+                word = pr;
+                probablity = probs[pr];
+            }else{
+                if(probs[pr] > probablity){
+                    word = pr;
+                    probablity = probs[pr];
+                }
+            }
+        }
+
+        return(word);
+    }
 
     /**
      * This will create the first initialisation of the network.
@@ -59,6 +90,20 @@ var Person = function (myName) {
      */
     this.init = function(){
         this.myBrain = new brain.NeuralNetwork(); //This system uses BULK training. Sorry ;(
+
+        //remove training against itself
+        var newTrain = [];
+        for(tr in this.training){
+            if(Object.keys(this.training[tr].input)[1] != this.myName){
+                var randConf = (Math.floor(Math.random() * 6) + 1);
+                for(i = 0; i < randConf; i++) {
+                    newTrain.push(this.training[tr]);
+                }
+            }
+        }
+
+        this.training = newTrain;
+
         this.myBrain.train(this.training);
     }
 };

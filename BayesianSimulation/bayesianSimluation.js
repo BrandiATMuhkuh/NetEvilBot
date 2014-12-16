@@ -15,19 +15,23 @@ var nodes = 3; //The nodes/people of the network
 var images = [
     "image0",
     "image1",
-    "image2"];
+    "image2",
+    "image4"];
 
 //All possible words in the network
 var words = [
     "fish",
     "dog",
-    "cat"];
+    "cat",
+    "crocodile"];
 
 
 //All possible users in the network
 var users = [];
 
-
+var randArrayElement = function(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+}
 
 
 
@@ -63,18 +67,38 @@ initTrainingData = initTrainingSet(images, nodes, words);
 var dolly = new Person("Dolly");
 dolly.training = initTrainingData;
 //run initial training
-dolly.init();
+//dolly.init();
 
 
-for (i = 0; i < nodes; i++) { //We clone 5 people
+for (var i = 0; i < nodes; i++) { //We clone 5 people
     var notDollyAgain = clone(dolly);
     notDollyAgain.myName = "person" + i;
-
+    notDollyAgain.init();
     users.push(notDollyAgain);
+}
+
+for(var i = 0; i < 10; i++) {
+    var randImage = randArrayElement(images);
+    var randUser1 = randArrayElement(users);
+    var randUser2 = randArrayElement(users);
+
+    do {
+        randUser2 = randArrayElement(users);
+    } while (randUser1.myName == randUser2.myName);
+
+    var ua1 = randUser1.guessFirst(randImage, randUser2.myName);
+    var ua2 = randUser2.guessFirst(randImage, randUser1.myName);
+    console.log(randUser1.myName, ua1, randUser2.myName, ua2);
+
+
+    randUser1.addTraining(randImage, randUser2.myName, ua2);
+    randUser2.addTraining(randImage, randUser1.myName, ua1);
 }
 
 
 
-users[0].guess("image0", "dolly0");
-users[1].guess("image0", "dolly0");
-users[2].guess("image0", "dolly0");
+//console.log(randImage);
+//console.log(randUser.myName);
+
+//console.log(users[0].guessFirst("image0", "dolly0"));
+//console.log(users[0].guess("image1", "dolly0"));
