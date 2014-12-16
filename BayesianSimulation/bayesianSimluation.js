@@ -6,57 +6,75 @@
  * 1: All data needs to be between 0 and 1
  * 2: All data needs to be trained in bulk. --> recreate of NeuralNetwork object --> expensive I know
  */
+var clone = require("clone");
 var Person = require("./Person.js");
+var nodes = 3; //The nodes/people of the network
 
 
 //All possible images in the network
 var images = [
+    "image0",
     "image1",
-    "image2",
-    "image3",
-    "image4",
-    "image5",
-    "image6",
-    "image7",
-    "image8",
-    "image9",
-    "image10"];
+    "image2"];
 
 //All possible words in the network
 var words = [
     "fish",
     "dog",
-    "cat",
-    "chicken",
-    "sheep",
-    "ape",
-    "human",
-    "snake"];
+    "cat"];
 
 
 //All possible users in the network
-var users = [
-    new Person("user1"),
-    new Person("user2"),
-    new Person("user3"),
-    new Person("user4"),
-    new Person("user5"),
-    new Person("user6")
-];
+var users = [];
 
 
 
 
 
-var person2 = new Person("user2");
-person2.addTraining("zero1", "zero2", "zero");
-person2.addTraining("zero1", "one2", "one");
-person2.addTraining("one1", "zero2", "one");
-person2.addTraining("one1", "one2", "zero");
-person2.addTraining("one1", "one2", "zero");
+var initTrainingSet = function (image, partnerName, partnerImageName) {
+    console.log("time to create a training set");
+
+    var initArray = [];
+
+    image.forEach(function (im) {
+        partnerImageName.forEach(function (wo) {
+            for (no = 0; no < partnerName; no++) {
+                var i = {};
+                i[im] = 1;
+
+                i["person" + no] = 1;
+                var o = {};
+                o[wo] = 1;
+                var t = {input: i, output: o};
+
+                initArray.push(t);
+
+            }
+        })
+    });
+
+    return initArray;
+
+}
+
+initTrainingData = initTrainingSet(images, nodes, words);
+
+//create initial person. We close it later for performance reasons
+var dolly = new Person("Dolly");
+dolly.training = initTrainingData;
+//run initial training
+dolly.init();
 
 
-person2.guess("zero1", "zero2");
-person2.guess("zero1", "one2");
-person2.guess("one1", "zero2");
-person2.guess("one1", "one2");
+for (i = 0; i < nodes; i++) { //We clone 5 people
+    var notDollyAgain = clone(dolly);
+    notDollyAgain.myName = "person" + i;
+
+    users.push(notDollyAgain);
+}
+
+
+
+users[0].guess("image0", "dolly0");
+users[1].guess("image0", "dolly0");
+users[2].guess("image0", "dolly0");

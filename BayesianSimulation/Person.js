@@ -2,6 +2,8 @@
  * Created by jbr134 on 16/12/14.
  */
 
+
+var brain = require("brain");
 /**
  * The class person describes one person in the network.
  * Each person has it's own "brain". By interacting with the other people in the network
@@ -9,9 +11,6 @@
  * @param {string} myName The name of the person
  * @constructor
  */
-
-var brain = require("brain");
-
 var Person = function (myName) {
     this.myName = myName;
     this.training = [];
@@ -52,6 +51,16 @@ var Person = function (myName) {
         i[partnerName] = 1;
         console.log(this.myBrain.run(i));
     };
+
+    /**
+     * This will create the first initialisation of the network.
+     * All use data will be removed. So only neighbors are included
+     * This needs to be executed after the person was cloned.
+     */
+    this.init = function(){
+        this.myBrain = new brain.NeuralNetwork(); //This system uses BULK training. Sorry ;(
+        this.myBrain.train(this.training);
+    }
 };
 
 module.exports = Person;
