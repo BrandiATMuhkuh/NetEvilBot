@@ -8,7 +8,7 @@
  */
 var clone = require("clone");
 var Person = require("./Person.js");
-var nodes = 3; //The nodes/people of the network
+var nodes = 10; //The nodes/people of the network
 
 
 //All possible images in the network
@@ -77,7 +77,7 @@ for (var i = 0; i < nodes; i++) { //We clone 5 people
     users.push(notDollyAgain);
 }
 
-for(var i = 0; i < 10; i++) {
+for(var i = 0; i < 100; i++) {
     var randImage = randArrayElement(images);
     var randUser1 = randArrayElement(users);
     var randUser2 = randArrayElement(users);
@@ -97,8 +97,11 @@ for(var i = 0; i < 10; i++) {
 
 
 
-//console.log(randImage);
-//console.log(randUser.myName);
+images.forEach(function (im) {
+    for (no = 0; no < nodes; no++) {
 
-//console.log(users[0].guessFirst("image0", "dolly0"));
-//console.log(users[0].guess("image1", "dolly0"));
+        console.log("person" + no, users[0].guess(im, "person" + no));
+
+    }
+
+});
