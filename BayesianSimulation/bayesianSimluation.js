@@ -61,6 +61,22 @@ var initTrainingSet = function (image, partnerName, partnerImageName) {
 
 }
 
+var printNetworkState = function(state, person, image){
+    var cvs = "";
+    cvs += "" + state + ", person" + person + ", " + image + ", ";
+    for (no = 0; no < nodes; no++) {
+        var gf = users[person].guessFirst(image, "person" + no);
+        var g = users[person].guess(image, "person" + no);
+
+        if(person != no) {
+            cvs += "person" + no + ", " + gf +", "+ g[gf]+", ";
+        }
+
+    }
+    cvs+= "\n";
+    return cvs;
+}
+
 initTrainingData = initTrainingSet(images, nodes, words);
 
 //create initial person. We close it later for performance reasons
@@ -77,7 +93,8 @@ for (var i = 0; i < nodes; i++) { //We clone 5 people
     users.push(notDollyAgain);
 }
 
-for(var i = 0; i < 100; i++) {
+var mycvs = "";
+for(var i = 0; i < 50; i++) {
     var randImage = randArrayElement(images);
     var randUser1 = randArrayElement(users);
     var randUser2 = randArrayElement(users);
@@ -88,20 +105,18 @@ for(var i = 0; i < 100; i++) {
 
     var ua1 = randUser1.guessFirst(randImage, randUser2.myName);
     var ua2 = randUser2.guessFirst(randImage, randUser1.myName);
-    console.log(randUser1.myName, ua1, randUser2.myName, ua2);
+    //console.log(randUser1.myName, ua1, randUser2.myName, ua2);
 
+
+    //Print CSV type output at network state x
+    for (var k = 0; k < nodes; k++) {
+       mycvs += printNetworkState(i, k, "image0");
+    }
 
     randUser1.addTraining(randImage, randUser2.myName, ua2);
     randUser2.addTraining(randImage, randUser1.myName, ua1);
+
+
+
 }
-
-
-
-images.forEach(function (im) {
-    for (no = 0; no < nodes; no++) {
-
-        console.log("person" + no, users[0].guess(im, "person" + no));
-
-    }
-
-});
+console.log(mycvs);
