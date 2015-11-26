@@ -1,0 +1,27 @@
+G1-G2: Are grammas
+Agend: An agent gramma lies between G1 and G2 (or 0.0=G1 and 1.0=G2)
+Production Fuction: The probablity of usering G1 or G2. And it is CATERGORICALNESS
+Probablilyt: CATERGORICALNESS parameter + bias of agent
+Bias: Determines when production function crosses X. In other words. If agend would speed with itself the Bias defines if the Agends ends up with G1 or G2
+-- An agend can have a BIAS -0.5(G0) to +0.5(G1)
+
+Bias-Dist(Flat): All agents same bias
+Bias-Dist(uniform-symetric): uniform distribution pairs from -0.5 to +0.5
+Bias-Dist(normal-symetric): nomrmal distribution pairs from -0.5 to +0.5
+
+Bias-Stdev-Log10: Log of the standard deviation
+
+Global-bias: extra bias for all agents
+  
+Bias-Target(): How bias is distribued
+Bias-Target(none): random 
+Bias-Target(nearby): sorted order, positive to negatvie, starting with most influentai agent
+Bias-Target(nearby): distributed in sorted order from random first one
+
+CATERGORICALNESS: =0:Linear function, >0:nonlnear (sigmoidal), =100: step function
+alpha learning: new gramma state is weigthed average of old state plus neighmors input
+Learning-Rate: How fast a node learns
+Number-of-nodes: Number of nodes
+Average node degree: everage nodes each node has number start with G1: how many nodes have already G1
+Start-Target: None=Randomly chose target with 1.0 (G2) Influentials=Start at "Start-target-rank"
+-- G1 = Start-Target-Rank + num-start-with-G1
