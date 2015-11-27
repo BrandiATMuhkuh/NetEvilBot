@@ -12,8 +12,6 @@ nodes-own
   search-visited?  ; used for keeping track of progress in a breadth-first-search,
                    ; not crucial to model behavior, just for computing network metrics
   network-node-id
-  is-robot ;define if node is robot or not
-  robot-connection; defines how many robots are connected to this node
 ]
 
 globals [ 
@@ -43,15 +41,12 @@ to setup [ rseed ]
   [  load-network network-filename ]
   [
     setup-nodes number-of-nodes
-
     if (network-type = "random")
     [ setup-random-network ]
     if (network-type = "spatial")
     [  setup-spatially-clustered-network ]
     if (network-type = "preferential")
     [  setup-preferential-network nodes average-node-degree ]
-    
-    
   ]
     
   ifelse (start-target = "influentials")
@@ -92,15 +87,6 @@ to setup [ rseed ]
       set indiv-categoricalness-angle categoricalness-angle
     ]
   ]
-  
-  
-  ;add robots
-  if robots?
-  [
-    robot-setup-nodes number-of-nodes / 4
-    robot-add-nodes "random" 5
-    ]
-  
 end
 
 to-report file-get-next-noncomment-line 
@@ -183,58 +169,7 @@ to setup-nodes [ num-nodes ]
     ; for visual reasons, we don't put any nodes *too* close to the edges
     setxy random-xcor * .95 random-ycor * .95
     set grammar 0.0
-    set is-robot false ;define if node is robot or not
-    set robot-connection 0; number of robots connected to this node
   ]
-end
-
-to robot-setup-nodes [ num-nodes ]
-  set-default-shape nodes "square"
-  create-nodes num-nodes
-  [
-    ; for visual reasons, we don't put any nodes *too* close to the edges
-    setxy random-xcor * .95 random-ycor * .95
-    set size 1
-    set color green
-    set grammar 0.0
-    set is-robot true;define if node is robot or not
-    set robot-connection 0; number of humans connected to this node
-  ]
-end
-
-to robot-add-nodes [ connection-type node-numbers]
-  ;"random"
-  
-  
-  ;this will connect all robot nodes with a random not robot node that has no robot
-  ask nodes with [is-robot = false and robot-connection = 0]
-  [
-    ;let human myself 
-    let thiswho who
-    
-    if (one-of nodes with [is-robot = true and robot-connection = 0] != nobody)[
-      ask one-of nodes with [is-robot = true and robot-connection = 0]
-      [
-        create-link-with myself
-        set robot-connection 1
-        
-        ask node thiswho [
-          set robot-connection 1
-          ]
-        
-        ]
-      ]      
-    ]
-
-  
-  ;show [who] of nodes with [is-robot = false] ;all not robot nodes
-  if (connection-type = "random")
-  [
-    
-    
-    
-    ]
-  
 end
 
 to setup-biases [ thenodes start-node reverse-order? ]
@@ -376,8 +311,8 @@ to rescale-network-to-world
 end
 
 to go
-  ask nodes with [is-robot = false] [ speak ] ;ask only humans to speak with each ohter
-  ask nodes with [is-robot = false] [ learn ] ;ask only humans to learn
+  ask nodes [ speak ]
+  ask nodes [ learn ]
 ;; this would be a different type of scheduling, where high degree nodes
 ;; are 'learning' much more quickly than the rest of the agents.
 ;; if we delete this stuff, also delete "learn-from" procedure down below!
@@ -391,7 +326,7 @@ to go
   if visuals?
   [
     with-local-randomness [
-      ask nodes with [is-robot = false]  [ color-by-grammar ]
+      ask nodes [ color-by-grammar ]
     ]
     update-plot
   ]
@@ -442,7 +377,7 @@ end
 to learn
   if (not any? link-neighbors)
     [ stop ]
-  let new-gram (learning-rate * mean [ spoken-val ] of link-neighbors with [is-robot = false]) + (1 - learning-rate) * grammar ;learns when talking to humans
+  let new-gram (learning-rate * mean [ spoken-val ] of link-neighbors) + (1 - learning-rate) * grammar 
   ifelse (new-gram > 1) 
     [ set new-gram 1 ]
     [ if (new-gram < 0) [ set new-gram 0 ] ]
@@ -464,9 +399,9 @@ to update-plot
   with-local-randomness [
     set-current-plot "Grammar State"
     set-current-plot-pen "state"
-    plot mean [ grammar ] of nodes  with [is-robot = false]
+    plot mean [ grammar ] of nodes
     set-current-plot-pen "spoken"
-    plot mean [ spoken-val ] of nodes  with [is-robot = false]
+    plot mean [ spoken-val ] of nodes
   ]
 end
 
@@ -474,7 +409,7 @@ to-report converged?
   ; if the chance of the out-lier node producing a minority-grammar
   ;    token in the next 10,000 time steps is safely less than 0.01%, then stop.
     if not any? nodes [ report false ]
-    report ((min [ grammar ] of nodes with [is-robot = false]) > (1 - 1E-8) or (max [ grammar ] of nodes with [is-robot = false]) < 1E-8)
+    report ((min [ grammar ] of nodes) > (1 - 1E-8) or (max [ grammar ] of nodes) < 1E-8)
 end
 
 ;; The following several procedures are not necessary for the running of the model, but may be
@@ -852,7 +787,7 @@ MONITOR
 955
 55
 max-grammar
-max [ grammar ] of nodes with [is-robot = false]
+max [ grammar ] of nodes
 4
 1
 11
@@ -863,7 +798,7 @@ MONITOR
 865
 55
 mean-grammar
-mean [ grammar ] of nodes with [is-robot = false]
+mean [ grammar ] of nodes
 4
 1
 11
@@ -891,7 +826,7 @@ MONITOR
 770
 55
 min-grammar
-min [grammar] of nodes with [is-robot = false]
+min [grammar] of nodes
 4
 1
 11
@@ -959,7 +894,7 @@ MONITOR
 955
 370
 mean-bias
-mean [grammar-bias] of nodes with [is-robot = false]
+mean [grammar-bias] of nodes
 10
 1
 11
@@ -1008,7 +943,7 @@ MONITOR
 955
 315
 min-bias
-min [grammar-bias] of nodes with [is-robot = false]
+min [grammar-bias] of nodes
 4
 1
 11
@@ -1071,7 +1006,7 @@ MONITOR
 831
 495
 measured avg deg
-2 * count links / (count nodes with [is-robot = false])
+2 * count links / (count nodes)
 3
 1
 11
@@ -1100,41 +1035,13 @@ false "AdHealthForNetLogo/comm2.txt" "AdHealthForNetLogo/comm3.txt" "AdHealthFor
 MONITOR
 700
 500
-937
+792
 545
 NIL
-count nodes with [is-robot = false]
+count nodes
 0
 1
 11
-
-SWITCH
-265
-490
-372
-523
-robots?
-robots?
-0
-1
--1000
-
-BUTTON
-15
-470
-112
-503
-Setup Fix
-  __clear-all-and-reset-ticks\nsetup 1
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
 
 @#$#@#$#@
 ## NOTES
