@@ -372,8 +372,8 @@ to rescale-network-to-world
 end
 
 to go
-  ask nodes [ speak ]
-  ask nodes [ learn ]
+  ask nodes with [is-robot = false] [ speak ] ;ask only humans to speak with each ohter
+  ask nodes with [is-robot = false] [ learn ] ;ask only humans to learn
 ;; this would be a different type of scheduling, where high degree nodes
 ;; are 'learning' much more quickly than the rest of the agents.
 ;; if we delete this stuff, also delete "learn-from" procedure down below!
@@ -438,7 +438,7 @@ end
 to learn
   if (not any? link-neighbors)
     [ stop ]
-  let new-gram (learning-rate * mean [ spoken-val ] of link-neighbors) + (1 - learning-rate) * grammar 
+  let new-gram (learning-rate * mean [ spoken-val ] of link-neighbors with [is-robot = false]) + (1 - learning-rate) * grammar ;learns when talking to humans
   ifelse (new-gram > 1) 
     [ set new-gram 1 ]
     [ if (new-gram < 0) [ set new-gram 0 ] ]
@@ -776,7 +776,7 @@ number-of-nodes
 number-of-nodes
 10
 500
-10
+84
 1
 1
 NIL
