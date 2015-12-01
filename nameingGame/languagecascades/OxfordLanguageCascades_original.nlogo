@@ -1043,6 +1043,23 @@ count nodes
 1
 11
 
+BUTTON
+15
+470
+112
+503
+Setup Fix
+  __clear-all-and-reset-ticks\nsetup 1
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 @#$#@#$#@
 ## NOTES
 

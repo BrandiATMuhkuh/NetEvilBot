@@ -97,7 +97,7 @@ to setup [ rseed ]
   ;add robots
   if robots?
   [
-    robot-setup-nodes number-of-nodes / 4
+    robot-setup-nodes num-of-robots
     robot-add-nodes "random" 5
     ]
   
@@ -132,6 +132,8 @@ to load-network [ fname ]
     ; for visual reasons, we don't put any nodes *too* close to the edges
     setxy random-xcor * .95 random-ycor * .95
     set grammar 0.0
+    set is-robot false
+    set robot-connection 0
   ]
   let ignore file-read-line ; #links
   repeat num-links
@@ -206,33 +208,28 @@ to robot-add-nodes [ connection-type node-numbers]
   ;"random"
   
   
-  ;this will connect all robot nodes with a random not robot node that has no robot
-  ask nodes with [is-robot = false and robot-connection = 0]
-  [
-    ;let human myself 
-    let thiswho who
-    
-    if (one-of nodes with [is-robot = true and robot-connection = 0] != nobody)[
-      ask one-of nodes with [is-robot = true and robot-connection = 0]
-      [
-        create-link-with myself
-        set robot-connection 1
-        
-        ask node thiswho [
-          set robot-connection 1
-          ]
-        
-        ]
-      ]      
-    ]
-
-  
+ 
   ;show [who] of nodes with [is-robot = false] ;all not robot nodes
   if (connection-type = "random")
   [
-    
-    
-    
+      ;this will connect all robot nodes with a random not robot node that has no robot
+    ask nodes with [is-robot = false and robot-connection = 0]
+    [
+      ;let human myself 
+      let thiswho who
+      
+      if (one-of nodes with [is-robot = true and robot-connection = 0] != nobody)[
+        ask one-of nodes with [is-robot = true and robot-connection = 0]
+        [
+          create-link-with myself
+          set robot-connection 1
+          
+          ask node thiswho [
+            set robot-connection 1
+            ]
+          ]
+        ]
+      ]
     ]
   
 end
@@ -378,6 +375,15 @@ end
 to go
   ask nodes with [is-robot = false] [ speak ] ;ask only humans to speak with each ohter
   ask nodes with [is-robot = false] [ learn ] ;ask only humans to learn
+  
+  if robots?
+  [
+    ;;ask nodes with [is-robot = false and robot-connection > 0] [robot-speak] ;all nodes with robots talk to their robots
+    ;;ask nodes with [is-robot = false and robot-connection > 0] [robot-learn] ;all nodes with robots learn from their robots
+    ]
+  
+  
+  
 ;; this would be a different type of scheduling, where high degree nodes
 ;; are 'learning' much more quickly than the rest of the agents.
 ;; if we delete this stuff, also delete "learn-from" procedure down below!
@@ -437,16 +443,59 @@ end
 to speak
   let prob (sigmoid-func grammar indiv-categoricalness-angle (global-bias + grammar-bias))
   set spoken-val ifelse-value (random-float 1.0 < prob) [ 1 ] [ 0 ]
+  ;print (global-bias + grammar-bias)
+end
+
+to robot-speak
 end
 
 to learn
   if (not any? link-neighbors)
     [ stop ]
   let new-gram (learning-rate * mean [ spoken-val ] of link-neighbors with [is-robot = false]) + (1 - learning-rate) * grammar ;learns when talking to humans
+  
+  
+  
+  let robot-impact 1
+  ;let robot-learning-rate 0.01
+  ;Do the robot learning here
+  if (robot-connection > 0 and robots?)
+  [
+    ;robot-leaning-rate * robot neigbors
+    let robot-neighbors count link-neighbors with [is-robot = true] ;number of robot neighbors
+    let nrlr robot-learning-rate * robot-neighbors ;multiply the robot learning rate with the number of robot neighbors
+    set new-gram (nrlr) + (1 - nrlr) * new-gram ;learns when talking to humans
+    ;set new-gram new-gram + robot-learning-rate
+    ]
+  
+  
+  ;if between 0-1 user new-gram
   ifelse (new-gram > 1) 
     [ set new-gram 1 ]
     [ if (new-gram < 0) [ set new-gram 0 ] ]
   set grammar new-gram
+  ;print grammar
+end
+
+to robot-learn
+  ;print "robot-learn"
+  if (not any? link-neighbors)
+    [ stop ]
+    
+    
+  ;let prob (sigmoid-func grammar indiv-categoricalness-angle (global-bias + grammar-bias))
+  ;set robot-spoken-val ifelse-value (random-float 1.0 < prob) [ 1 ] [ 0 ]
+  
+    
+  let robot-impact 1
+  ;let robot-learning-rate learning-rate * 0.8
+  let new-gram (robot-learning-rate * robot-impact) + (1 - robot-learning-rate) * grammar ;learns when talking to humans
+  ;if between 0-1 user new-gram
+  ifelse (new-gram > 1) 
+    [ set new-gram 1 ]
+    [ if (new-gram < 0) [ set new-gram 0 ] ]
+  set grammar new-gram
+  ;print grammar
 end
 
 ;; This procedure would be useful, if we decided to use the different update scheduling mentioned in
@@ -780,7 +829,7 @@ number-of-nodes
 number-of-nodes
 10
 500
-256
+232
 1
 1
 NIL
@@ -825,7 +874,7 @@ num-start-with-G1
 num-start-with-G1
 0
 number-of-nodes
-1
+0
 1
 1
 NIL
@@ -919,7 +968,7 @@ CHOOSER
 network-type
 network-type
 "spatial" "random" "preferential" "from-file"
-2
+3
 
 SLIDER
 685
@@ -1095,7 +1144,7 @@ CHOOSER
 network-filename
 network-filename
 false "AdHealthForNetLogo/comm2.txt" "AdHealthForNetLogo/comm3.txt" "AdHealthForNetLogo/comm37.txt" "AdHealthForNetLogo/comm55.txt" "AdHealthForNetLogo/comm63.txt"
-0
+2
 
 MONITOR
 700
@@ -1135,6 +1184,36 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+15
+515
+190
+548
+num-of-robots
+num-of-robots
+0
+100
+20
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+15
+555
+190
+588
+robot-learning-rate
+robot-learning-rate
+0
+1
+0.07
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## NOTES
