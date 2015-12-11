@@ -17,6 +17,7 @@ nodes-own
 ]
 
 globals [ 
+  msort ; just used for playing in the console
   seed 
   initial-fraction-influenced-by-minority
   outbreak-starting-nodes
@@ -98,16 +99,18 @@ to setup [ rseed ]
   if robots?
   [
     robot-setup-nodes num-of-robots
-    robot-add-nodes "random" 5
+    robot-add-nodes 5
     ]
   
 end
 
 to-report file-get-next-noncomment-line 
   let line file-read-line
+  print line
   while [first line = "#" and not file-at-end?]
   [
     set line file-read-line
+    print line
   ]
   if file-at-end?
   [
@@ -204,13 +207,13 @@ to robot-setup-nodes [ num-nodes ]
   ]
 end
 
-to robot-add-nodes [ connection-type node-numbers]
+to robot-add-nodes [ node-numbers]
   ;"random"
   
   
  
   ;show [who] of nodes with [is-robot = false] ;all not robot nodes
-  if (connection-type = "random")
+  if (robot-start-target = "random")
   [
       ;this will connect all robot nodes with a random not robot node that has no robot
     ask nodes with [is-robot = false and robot-connection = 0]
@@ -231,6 +234,48 @@ to robot-add-nodes [ connection-type node-numbers]
         ]
       ]
     ]
+  
+  ;centrality
+  if (robot-start-target = "betweenness-centrality" or robot-start-target = "closeness-centrality" or robot-start-target = "page-rank")
+  [
+    let nodesort []
+    
+    ;betweenness-centrality
+    if (robot-start-target = "betweenness-centrality")
+    [
+      set nodesort sort-on [1 - nw:betweenness-centrality] nodes with [is-robot = false]
+    ]
+    
+    ;betweenness-centrality
+    if (robot-start-target = "closeness-centrality")
+    [
+      set nodesort sort-on [1 - nw:closeness-centrality] nodes with [is-robot = false]
+    ]
+    
+    ;page-rank
+    if (robot-start-target = "page-rank")
+    [
+      set nodesort sort-on [1 - nw:page-rank] nodes with [is-robot = false]
+    ]
+    
+    
+    
+    set nodesort sublist nodesort 0 num-of-robots
+    foreach nodesort [
+      let thiswho ?      
+      
+      ask one-of nodes with [is-robot = true and robot-connection = 0]
+      [
+        create-link-with thiswho
+        set robot-connection 1
+        ask thiswho [
+            set robot-connection 1
+            ]
+        ]
+      
+      ]
+    ]
+  
   
 end
 
@@ -829,7 +874,7 @@ number-of-nodes
 number-of-nodes
 10
 500
-232
+256
 1
 1
 NIL
@@ -874,7 +919,7 @@ num-start-with-G1
 num-start-with-G1
 0
 number-of-nodes
-0
+1
 1
 1
 NIL
@@ -968,7 +1013,7 @@ CHOOSER
 network-type
 network-type
 "spatial" "random" "preferential" "from-file"
-3
+1
 
 SLIDER
 685
@@ -1143,8 +1188,8 @@ CHOOSER
 115
 network-filename
 network-filename
-false "AdHealthForNetLogo/comm2.txt" "AdHealthForNetLogo/comm3.txt" "AdHealthForNetLogo/comm37.txt" "AdHealthForNetLogo/comm55.txt" "AdHealthForNetLogo/comm63.txt"
-2
+false "AdHealthForNetLogo/karate.txt" "AdHealthForNetLogo/comm2.txt" "AdHealthForNetLogo/comm3.txt" "AdHealthForNetLogo/comm37.txt" "AdHealthForNetLogo/comm55.txt" "AdHealthForNetLogo/comm63.txt"
+1
 
 MONITOR
 700
@@ -1187,14 +1232,14 @@ NIL
 
 SLIDER
 15
-515
-190
-548
+570
+210
+603
 num-of-robots
 num-of-robots
 0
 100
-20
+1
 1
 1
 NIL
@@ -1202,18 +1247,28 @@ HORIZONTAL
 
 SLIDER
 15
-555
-190
-588
+605
+210
+638
 robot-learning-rate
 robot-learning-rate
 0
 1
-0.07
+0.3
 0.01
 1
 NIL
 HORIZONTAL
+
+CHOOSER
+15
+515
+232
+560
+robot-start-target
+robot-start-target
+"random" "betweenness-centrality" "closeness-centrality" "page-rank"
+3
 
 @#$#@#$#@
 ## NOTES
