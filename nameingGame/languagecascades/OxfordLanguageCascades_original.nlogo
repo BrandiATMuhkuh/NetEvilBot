@@ -3072,7 +3072,7 @@ NetLogo 5.3
       <value value="false"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_adhealthcomm3_influentials_hires" repetitions="100" runMetricsEveryStep="false">
+  <experiment name="LC_adhealthcomm3_influentials_hires" repetitions="1000" runMetricsEveryStep="false">
     <setup>setup-network-with-instigator-degree desired-instigator-degree</setup>
     <go>go</go>
     <timeLimit steps="10000"/>
