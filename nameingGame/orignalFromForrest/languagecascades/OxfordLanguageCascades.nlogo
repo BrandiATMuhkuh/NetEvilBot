@@ -730,7 +730,7 @@ categoricalness-angle
 categoricalness-angle
 45
 90
-60
+45
 0.25
 1
 NIL
@@ -854,7 +854,7 @@ CHOOSER
 network-type
 network-type
 "spatial" "random" "preferential" "from-file"
-2
+3
 
 SLIDER
 685
@@ -923,7 +923,7 @@ SWITCH
 483
 visuals?
 visuals?
-0
+1
 1
 -1000
 
@@ -956,7 +956,7 @@ CHOOSER
 bias-target
 bias-target
 "influentials" "nearby" "none"
-1
+0
 
 CHOOSER
 40
@@ -1030,7 +1030,7 @@ CHOOSER
 network-filename
 network-filename
 false "AdHealthForNetLogo/comm2.txt" "AdHealthForNetLogo/comm3.txt" "AdHealthForNetLogo/comm37.txt" "AdHealthForNetLogo/comm55.txt" "AdHealthForNetLogo/comm63.txt"
-0
+2
 
 MONITOR
 700
@@ -2553,10 +2553,9 @@ NetLogo 5.3
       <value value="1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_target_random_hires" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="LC_target_random_hires" repetitions="500" runMetricsEveryStep="false">
     <setup>setup-network-with-instigator-degree desired-instigator-degree</setup>
     <go>go</go>
-    <final>save-network-and-results (word "odata_randhr/" unique-filename)</final>
     <timeLimit steps="10000"/>
     <exitCondition>converged?</exitCondition>
     <metric>cascaded?</metric>
@@ -2579,9 +2578,6 @@ NetLogo 5.3
     <metric>[clustering-coefficient] of instigator</metric>
     <metric>[avg-neighbor-degree] of instigator</metric>
     <metric>unique-filename</metric>
-    <enumeratedValueSet variable="heterogeneous-categoricalness?">
-      <value value="false"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="bias-target">
       <value value="&quot;none&quot;"/>
     </enumeratedValueSet>
@@ -2617,17 +2613,13 @@ NetLogo 5.3
     <enumeratedValueSet variable="visuals?">
       <value value="false"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="probabilistic-speech?">
-      <value value="true"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="bias-stdev-log10">
       <value value="1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_target_influentials_hires" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="LC_target_influentials_hires" repetitions="500" runMetricsEveryStep="false">
     <setup>setup-network-with-instigator-degree desired-instigator-degree</setup>
     <go>go</go>
-    <final>save-network-and-results (word "odata_infhr/" unique-filename)</final>
     <timeLimit steps="10000"/>
     <exitCondition>converged?</exitCondition>
     <metric>cascaded?</metric>
@@ -2650,9 +2642,6 @@ NetLogo 5.3
     <metric>[clustering-coefficient] of instigator</metric>
     <metric>[avg-neighbor-degree] of instigator</metric>
     <metric>unique-filename</metric>
-    <enumeratedValueSet variable="heterogeneous-categoricalness?">
-      <value value="false"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="bias-target">
       <value value="&quot;influentials&quot;"/>
     </enumeratedValueSet>
@@ -2688,17 +2677,13 @@ NetLogo 5.3
     <enumeratedValueSet variable="visuals?">
       <value value="false"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="probabilistic-speech?">
-      <value value="true"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="bias-stdev-log10">
       <value value="1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_target_nearby_hires" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="LC_target_nearby_hires" repetitions="500" runMetricsEveryStep="false">
     <setup>setup-network-with-instigator-degree desired-instigator-degree</setup>
     <go>go</go>
-    <final>save-network-and-results (word "odata_nearbyhr/" unique-filename)</final>
     <timeLimit steps="10000"/>
     <exitCondition>converged?</exitCondition>
     <metric>cascaded?</metric>
@@ -2721,9 +2706,6 @@ NetLogo 5.3
     <metric>[clustering-coefficient] of instigator</metric>
     <metric>[avg-neighbor-degree] of instigator</metric>
     <metric>unique-filename</metric>
-    <enumeratedValueSet variable="heterogeneous-categoricalness?">
-      <value value="false"/>
-    </enumeratedValueSet>
     <enumeratedValueSet variable="bias-target">
       <value value="&quot;nearby&quot;"/>
     </enumeratedValueSet>
@@ -2758,9 +2740,6 @@ NetLogo 5.3
     </enumeratedValueSet>
     <enumeratedValueSet variable="visuals?">
       <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="probabilistic-speech?">
-      <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="bias-stdev-log10">
       <value value="1"/>

@@ -1,14 +1,14 @@
 extensions [ palette nw ]
- 
+
 breed [ nodes node ]
 
 nodes-own
-[ 
+[
   grammar
   grammar-bias
   indiv-categoricalness-angle  ; controls the amount of categoricalness in each individual's production function
   spoken-val
-  
+
   search-visited?  ; used for keeping track of progress in a breadth-first-search,
                    ; not crucial to model behavior, just for computing network metrics
   network-node-id
@@ -16,12 +16,12 @@ nodes-own
   robot-connection; defines how many robots are connected to this node
 ]
 
-globals [ 
+globals [
   msort ; just used for playing in the console
-  seed 
+  seed
   initial-fraction-influenced-by-minority
   outbreak-starting-nodes
-  
+
   desired-instigator-degree  ; only used in the SETUP-NETWORK-WITH-INSTIGATOR-DEGREE procedure
   ]
 
@@ -36,8 +36,8 @@ to setup [ rseed ]
     set seed rseed
     random-seed seed
   ]
-  with-local-randomness [  
-   ; ask patches [set pcolor cyan - 3 ]  
+  with-local-randomness [
+   ; ask patches [set pcolor cyan - 3 ]
     ask patches [ set pcolor white ]
     ]
   ifelse (network-type = "from-file")
@@ -51,19 +51,19 @@ to setup [ rseed ]
     [  setup-spatially-clustered-network ]
     if (network-type = "preferential")
     [  setup-preferential-network nodes average-node-degree ]
-    
-    
+
+
   ]
-    
+
   ifelse (start-target = "influentials")
   [
     let sortednodes sort-by [[count link-neighbors] of ?1 > [count link-neighbors] of ?2 ] nodes
     repeat start-target-rank
      [ set sortednodes but-first sortednodes ]
-    set outbreak-starting-nodes (turtle-set sublist sortednodes 0 num-start-with-G1) 
+    set outbreak-starting-nodes (turtle-set sublist sortednodes 0 num-start-with-G1)
     ask outbreak-starting-nodes [ set grammar 1.0 ]
   ][
-    set outbreak-starting-nodes n-of num-start-with-G1 nodes 
+    set outbreak-starting-nodes n-of num-start-with-G1 nodes
     ask outbreak-starting-nodes
     [
       set grammar 1.0
@@ -80,9 +80,9 @@ to setup [ rseed ]
 
     if visuals?
     [
-      ask nodes 
-      [ 
-        color-by-grammar 
+      ask nodes
+      [
+        color-by-grammar
         size-by-degree
       ]
       ask links [ set color gray + 2 ]
@@ -93,24 +93,24 @@ to setup [ rseed ]
       set indiv-categoricalness-angle categoricalness-angle
     ]
   ]
-  
-  
+
+
   ;add robots
   if robots?
   [
     robot-setup-nodes num-of-robots
     robot-add-nodes 5
     ]
-  
+
 end
 
-to-report file-get-next-noncomment-line 
+to-report file-get-next-noncomment-line
   let line file-read-line
-  print line
+  ;print line
   while [first line = "#" and not file-at-end?]
   [
     set line file-read-line
-    print line
+    ;print line
   ]
   if file-at-end?
   [
@@ -123,15 +123,15 @@ to load-network [ fname ]
   file-open fname
   let num-nodes read-from-string file-get-next-noncomment-line
   let num-links read-from-string file-get-next-noncomment-line
-  
+
   let node-list []
 
   set-default-shape nodes "circle"
-    
+
   create-nodes num-nodes [
     ;set label (length node-list) set label-color black
     set network-node-id length node-list
-    set node-list lput self node-list    
+    set node-list lput self node-list
     ; for visual reasons, we don't put any nodes *too* close to the edges
     setxy random-xcor * .95 random-ycor * .95
     set grammar 0.0
@@ -149,9 +149,9 @@ to load-network [ fname ]
     ]
   ]
   file-close
-  
+
   if visuals? [
-;    with-local-randomness [ repeat 100 [ do-network-layout nodes  ]] 
+;    with-local-randomness [ repeat 100 [ do-network-layout nodes  ]]
   ]
 end
 
@@ -166,7 +166,7 @@ end
 
 to-report random-normal-cutoff [ avg stdev xmin xmax ]
   let x random-normal avg stdev
-  while [ x < xmin or x > xmax ] 
+  while [ x < xmin or x > xmax ]
   [ set x random-normal avg stdev ]
   report x
 end
@@ -182,7 +182,7 @@ end
 
 to setup-nodes [ num-nodes ]
   set-default-shape nodes "circle"
-    
+
   create-nodes num-nodes
   [
     ; for visual reasons, we don't put any nodes *too* close to the edges
@@ -209,24 +209,24 @@ end
 
 to robot-add-nodes [ node-numbers]
   ;"random"
-  
-  
- 
+
+
+
   ;show [who] of nodes with [is-robot = false] ;all not robot nodes
   if (robot-start-target = "random")
   [
       ;this will connect all robot nodes with a random not robot node that has no robot
     ask nodes with [is-robot = false and robot-connection = 0]
     [
-      ;let human myself 
+      ;let human myself
       let thiswho who
-      
+
       if (one-of nodes with [is-robot = true and robot-connection = 0] != nobody)[
         ask one-of nodes with [is-robot = true and robot-connection = 0]
         [
           create-link-with myself
           set robot-connection 1
-          
+
           ask node thiswho [
             set robot-connection 1
             ]
@@ -234,36 +234,36 @@ to robot-add-nodes [ node-numbers]
         ]
       ]
     ]
-  
+
   ;centrality
   if (robot-start-target = "betweenness-centrality" or robot-start-target = "closeness-centrality" or robot-start-target = "page-rank")
   [
     let nodesort []
-    
+
     ;betweenness-centrality
     if (robot-start-target = "betweenness-centrality")
     [
       set nodesort sort-on [1 - nw:betweenness-centrality] nodes with [is-robot = false]
     ]
-    
+
     ;betweenness-centrality
     if (robot-start-target = "closeness-centrality")
     [
       set nodesort sort-on [1 - nw:closeness-centrality] nodes with [is-robot = false]
     ]
-    
+
     ;page-rank
     if (robot-start-target = "page-rank")
     [
       set nodesort sort-on [1 - nw:page-rank] nodes with [is-robot = false]
     ]
-    
-    
-    
+
+
+
     set nodesort sublist nodesort 0 num-of-robots
     foreach nodesort [
-      let thiswho ?      
-      
+      let thiswho ?
+
       ask one-of nodes with [is-robot = true and robot-connection = 0]
       [
         create-link-with thiswho
@@ -272,17 +272,17 @@ to robot-add-nodes [ node-numbers]
             set robot-connection 1
             ]
         ]
-      
+
       ]
     ]
-  
-  
+
+
 end
 
 to setup-biases [ thenodes start-node reverse-order? ]
   ;; kill everyone not in the giant component... ??
   with-local-randomness [ ask nodes with [ nw:distance-to start-node = false ] [ die ] ]
-      
+
   let bias-list false ; this will cause an error if bias-dist wasn't a valid choice.
   if (bias-dist = "flat")
   [ set bias-list n-values (count thenodes) [ global-bias ]  ]
@@ -302,7 +302,7 @@ to setup-biases [ thenodes start-node reverse-order? ]
     set bias-list sort bias-list
     set nodelist sort-by [[nw:distance-to start-node] of ?1 > [nw:distance-to start-node] of ?2 ] thenodes
   ]
-  if (reverse-order?) 
+  if (reverse-order?)
     [ set bias-list reverse bias-list ]
   foreach nodelist
   [
@@ -315,7 +315,7 @@ to setup-biases [ thenodes start-node reverse-order? ]
 end
 
 to setup-random-network
-  ask nodes [ 
+  ask nodes [
     ask nodes with [who > [who] of myself ]
     [
       if (random-float 1.0 < (average-node-degree / (number-of-nodes - 1) ))
@@ -324,7 +324,7 @@ to setup-random-network
   ]
   if visuals?
   [
-     repeat 40 [ do-network-layout nodes ]  
+     repeat 40 [ do-network-layout nodes ]
      rescale-network-to-world
   ]
 end
@@ -343,7 +343,7 @@ to setup-spatially-clustered-network
   ; make the network look a little prettier
   if visuals?
   [
-     repeat 10 [ do-network-layout nodes ]  
+     repeat 10 [ do-network-layout nodes ]
      rescale-network-to-world
   ]
 end
@@ -351,14 +351,14 @@ end
 
 to setup-preferential-network [ thenodes avg-node-deg ]
   link-preferentially thenodes (avg-node-deg / 2)
-  
+
   ; make the network look a little prettier
   if visuals?
   [
      with-local-randomness [
        layout-radial thenodes links (max-one-of thenodes [ count link-neighbors ] )
      ]
-     repeat 10 [ do-network-layout thenodes ]  
+     repeat 10 [ do-network-layout thenodes ]
      rescale-network-to-world
   ]
 end
@@ -372,13 +372,13 @@ to link-preferentially [ nodeset k ]
   let nodelist sort nodeset
 
   let neighborchoicelist sublist nodelist 0 floork
-  
+
   ask item floork nodelist
-  [ 
-    create-links-with turtle-set neighborchoicelist 
+  [
+    create-links-with turtle-set neighborchoicelist
     set neighborchoicelist sentence (n-values floork [ self ] ) neighborchoicelist
   ]
-  
+
   foreach sublist nodelist (floork + 1) (length nodelist)
   [
     ask ?
@@ -388,7 +388,7 @@ to link-preferentially [ nodeset k ]
       repeat mydegree
       [
         let neighbor one-of tempneighborlist
-        set tempneighborlist remove neighbor tempneighborlist 
+        set tempneighborlist remove neighbor tempneighborlist
         set neighborchoicelist fput neighbor neighborchoicelist
         create-link-with neighbor
       ]
@@ -410,7 +410,7 @@ to rescale-network-to-world
       let miny (min [ ycor ] of nodes)
       let cw (max [ xcor ] of nodes) - minx
       let ch (max [ ycor ] of nodes) - miny
-      ask nodes [ 
+      ask nodes [
         set xcor (xcor - minx) / cw * (world-width - 1) + min-pxcor
         set ycor (ycor - miny) / ch * (world-height - 1) + min-pycor
       ]
@@ -420,15 +420,15 @@ end
 to go
   ask nodes with [is-robot = false] [ speak ] ;ask only humans to speak with each ohter
   ask nodes with [is-robot = false] [ learn ] ;ask only humans to learn
-  
+
   if robots?
   [
     ;;ask nodes with [is-robot = false and robot-connection > 0] [robot-speak] ;all nodes with robots talk to their robots
     ;;ask nodes with [is-robot = false and robot-connection > 0] [robot-learn] ;all nodes with robots learn from their robots
     ]
-  
-  
-  
+
+
+
 ;; this would be a different type of scheduling, where high degree nodes
 ;; are 'learning' much more quickly than the rest of the agents.
 ;; if we delete this stuff, also delete "learn-from" procedure down below!
@@ -438,7 +438,7 @@ to go
 ;      learn-from other-end
 ;    ]
 ;  ]
-  
+
   if visuals?
   [
     with-local-randomness [
@@ -498,9 +498,9 @@ to learn
   if (not any? link-neighbors)
     [ stop ]
   let new-gram (learning-rate * mean [ spoken-val ] of link-neighbors with [is-robot = false]) + (1 - learning-rate) * grammar ;learns when talking to humans
-  
-  
-  
+
+
+
   let robot-impact 1
   ;let robot-learning-rate 0.01
   ;Do the robot learning here
@@ -509,45 +509,27 @@ to learn
     ;robot-leaning-rate * robot neigbors
     let robot-neighbors count link-neighbors with [is-robot = true] ;number of robot neighbors
     let nrlr robot-learning-rate * robot-neighbors ;multiply the robot learning rate with the number of robot neighbors
-    set new-gram (nrlr) + (1 - nrlr) * new-gram ;learns when talking to humans
+    ;set new-gram (nrlr) + (1 - nrlr) * new-gram ;learns when talking to humans
+    set new-gram (nrlr) + (1 - robot-learning-rate) * new-gram ;learns when talking to humans
     ;set new-gram new-gram + robot-learning-rate
     ]
-  
-  
+
+
   ;if between 0-1 user new-gram
-  ifelse (new-gram > 1) 
+  ifelse (new-gram > 1)
     [ set new-gram 1 ]
     [ if (new-gram < 0) [ set new-gram 0 ] ]
   set grammar new-gram
   ;print grammar
 end
 
-to robot-learn
-  ;print "robot-learn"
-  if (not any? link-neighbors)
-    [ stop ]
-    
-    
-  ;let prob (sigmoid-func grammar indiv-categoricalness-angle (global-bias + grammar-bias))
-  ;set robot-spoken-val ifelse-value (random-float 1.0 < prob) [ 1 ] [ 0 ]
-  
-    
-  let robot-impact 1
-  ;let robot-learning-rate learning-rate * 0.8
-  let new-gram (robot-learning-rate * robot-impact) + (1 - robot-learning-rate) * grammar ;learns when talking to humans
-  ;if between 0-1 user new-gram
-  ifelse (new-gram > 1) 
-    [ set new-gram 1 ]
-    [ if (new-gram < 0) [ set new-gram 0 ] ]
-  set grammar new-gram
-  ;print grammar
-end
+
 
 ;; This procedure would be useful, if we decided to use the different update scheduling mentioned in
 ;; the GO procedure, wherein high degree nodes do a lot more speaking *AND* learning than other nodes.
 ;to learn-from [ othernode ]
-;  let new-gram (learning-rate * [ spoken-val ] of othernode) + (1 - learning-rate) * grammar 
-;  ifelse (new-gram > 1) 
+;  let new-gram (learning-rate * [ spoken-val ] of othernode) + (1 - learning-rate) * grammar
+;  ifelse (new-gram > 1)
 ;    [ set new-gram 1 ]
 ;    [ if (new-gram < 0) [ set new-gram 0 ] ]
 ;  set grammar new-gram
@@ -575,14 +557,14 @@ end
 ;; useful for measuring the model, BehaviorSpace experiments, etc.
 
 to-report cascaded?
-  ifelse (converged? and mean [grammar] of nodes > 0.5) 
-    [ report 1 ] 
+  ifelse (converged? and mean [grammar] of nodes > 0.5)
+    [ report 1 ]
     [ report 0 ]
 end
 
 to-report cascaded90?
   ifelse (mean [grammar] of nodes > 0.9)
-  [ report 1 ] 
+  [ report 1 ]
   [ report 0 ]
 end
 
@@ -598,9 +580,9 @@ to-report degree-distribution
   report reverse sort [ count link-neighbors ] of nodes
 end
 
-;; reports the node that started the outbreak. if there are multiple starting nodes, 
+;; reports the node that started the outbreak. if there are multiple starting nodes,
 ;; the node with the highest degree is returned.
-to-report instigator 
+to-report instigator
   report max-one-of outbreak-starting-nodes [count link-neighbors]
 end
 
@@ -652,35 +634,35 @@ to setup-network-with-instigator-degree [ instigator-degree ]
   random-seed seed
   set desired-instigator-degree instigator-degree
   ask nodes [ set grammar 0 ]
-  
+
   let start-node one-of nodes with [ count link-neighbors = instigator-degree ]
-  
+
   set outbreak-starting-nodes (turtle-set start-node)
   ask outbreak-starting-nodes
   [
     set grammar 1.0
   ]
-  
+
   setup-biases nodes start-node false
-  
-  
+
+
   with-local-randomness [
     set initial-fraction-influenced-by-minority sum [ count link-neighbors ] of nodes with [ grammar > 0.5 ] / (2 * count links )
 
     if visuals?
     [
-      ask nodes 
-      [ 
-        color-by-grammar 
+      ask nodes
+      [
+        color-by-grammar
         size-by-degree
       ]
       ask links [ set color gray + 2 ]
     ]
-  ] 
+  ]
 end
 
 to-report unique-filename
-  report (word "DAT" 
+  report (word "DAT"
     "_" network-type
     "_N" (precision number-of-nodes 0)
     "_AD" (precision average-node-degree 0)
@@ -688,10 +670,10 @@ to-report unique-filename
     "_S" start-target
     "_" (precision start-target-rank 0)
     "_" (precision num-start-with-G1 0)
-    "_" (precision desired-instigator-degree 0) 
+    "_" (precision desired-instigator-degree 0)
     "_" (precision categoricalness-angle 2)
     "_" (precision learning-rate 3)
-    "_" seed 
+    "_" seed
     ".data"
     )
 end
@@ -704,8 +686,8 @@ end
 to save-network-and-results [ fname ]
   file-open fname
   file-print (word "# $START$ " fname)  ; "#" comments to be compatable with networkx edgelist file format
-  file-print (word "# categoricalness-angle " categoricalness-angle) 
-  file-print (word "# cascaded? " cascaded?) 
+  file-print (word "# categoricalness-angle " categoricalness-angle)
+  file-print (word "# cascaded? " cascaded?)
   file-print (word "# cascaded90? " cascaded90?)
   file-print (word "# converged? " converged?)
   file-print (word "# finalmeangrammar " (mean [grammar] of nodes))
@@ -722,7 +704,7 @@ to save-network-and-results [ fname ]
   file-close
 end
 
-;; NOTE: in the following procedures, the "0 - grammar-bias" is to account for the 
+;; NOTE: in the following procedures, the "0 - grammar-bias" is to account for the
 ;; fact that in the paper the "beta" bias term describes the inflection point of the
 ;; production function, so a negative bias value is in FAVOR of the innovation,
 ;; but this NetLogo model uses a positive bias value to be in FAVOR of the innovation,
@@ -742,7 +724,7 @@ end
 to-report instigator-best-neighbor-bias
   report [min ([0 - grammar-bias] of link-neighbors)] of instigator
 end
-  
+
 to-report instigator-worst-neighbor-bias
   report [min ([0 - grammar-bias] of link-neighbors)] of instigator
 end
@@ -768,21 +750,21 @@ end
 to temp-color-coding
   ; addhealth comm3 nearby, phi60, omplete cascade freq
   ; max of 33
-;  color-network-by-data-list [0 0 1 14 4 0 2 1 14 0 0 0 1 0 0 0 1 0 0 0 2 0 0 2 0 0 0 0 0 0 33 19] 
+;  color-network-by-data-list [0 0 1 14 4 0 2 1 14 0 0 0 1 0 0 0 1 0 0 0 2 0 0 2 0 0 0 0 0 0 33 19]
 
 
   ; addhealth comm3 nearby, phi60, dominance cascade freq
   ; max of 560
 ;  color-network-by-data-list [3 13 59 560 29 12 9 2 243 227 10 0 1 0 0 0 1 0 16 0 2 0 62 25 0 9 9 6 68 5 40 23]
-  
+
   ; addhealth comm3 nearby, phi60, survival cascade freq
   ; max of 2122
 ;  color-network-by-data-list [880 1654 127 560 67 18 9 2 243 227 10 401 6 5 0 0 2 0 16 2122 195 0 62 25 0 214 9 1275 68 118 204 23]
-  
+
   ; addhealth comm3 influentials/hubs, phi60, survival cascade freq
   ; max of 101
   color-network-by-data-list [0 0 0 101 0 0 1 0 11 23 10 0 0 0 0 0 0 1 0 0 0 0 7 3 0 0 0 0 2 0 0 2]
-  
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -874,7 +856,7 @@ number-of-nodes
 number-of-nodes
 10
 500
-256
+10
 1
 1
 NIL
@@ -889,7 +871,7 @@ categoricalness-angle
 categoricalness-angle
 45
 90
-60
+45
 0.25
 1
 NIL
@@ -904,7 +886,7 @@ average-node-degree
 average-node-degree
 2
 10
-4
+3.6
 0.2
 1
 NIL
@@ -919,7 +901,7 @@ num-start-with-G1
 num-start-with-G1
 0
 number-of-nodes
-1
+0
 1
 1
 NIL
@@ -1013,7 +995,7 @@ CHOOSER
 network-type
 network-type
 "spatial" "random" "preferential" "from-file"
-1
+3
 
 SLIDER
 685
@@ -1036,7 +1018,7 @@ BUTTON
 624
 483
 layout
-with-local-randomness \n[ do-network-layout nodes display ] 
+with-local-randomness \n[ do-network-layout nodes display ]
 T
 1
 T
@@ -1094,7 +1076,7 @@ CHOOSER
 bias-dist
 bias-dist
 "flat" "uniform-symmetric" "normal-symmetric"
-1
+2
 
 MONITOR
 865
@@ -1115,7 +1097,7 @@ CHOOSER
 bias-target
 bias-target
 "influentials" "nearby" "none"
-1
+2
 
 CHOOSER
 40
@@ -1135,7 +1117,7 @@ SLIDER
 start-target-rank
 start-target-rank
 0
-number-of-nodes - num-start-with-G1
+count nodes - 2
 0
 1
 1
@@ -1254,7 +1236,7 @@ robot-learning-rate
 robot-learning-rate
 0
 1
-0.3
+0.06
 0.01
 1
 NIL
@@ -1268,12 +1250,12 @@ CHOOSER
 robot-start-target
 robot-start-target
 "random" "betweenness-centrality" "closeness-centrality" "page-rank"
-3
+1
 
 @#$#@#$#@
 ## NOTES
 
-* distributing bias "nearby" doesn't work properly when the network is not connected.  
+* distributing bias "nearby" doesn't work properly when the network is not connected.
 *
 
 ## WHAT IS IT?
@@ -1284,7 +1266,7 @@ While the model was developed for linguistics, there are potentially useful less
 
 ## HOW IT WORKS
 
-In this model, there are two opposing grammar variants (G0 and G1) in the population.  Each agent's grammar value lies on the range between 0.0 and 1.0.  The value 0.0 means that the agent only speaks grammar variant G0, whereas 1.0 means that the agent only speaks grammar variant G1.  For grammar values between 0.0 and 1.0, an agent may speak either G0 or G1, with some probability.  The probability is determined by a "production function", the shape of which depends on the CATEGORICALNESS parameter, as well as a 'bias' which can vary between agents (this 'bias' may be distributed in various ways, as shall be discussed in more detail later).  It is called a "production" function because it maps a tendency toward one grammar or another into a probability of producing a token for one grammar or the other.  If CATEGORICALNESS = 0, the production function is linear, meaning that agents produce G1 tokens with probability given directly by their grammar value, and G0 tokens otherwise.  If CATEGORICALNESS > 0  
+In this model, there are two opposing grammar variants (G0 and G1) in the population.  Each agent's grammar value lies on the range between 0.0 and 1.0.  The value 0.0 means that the agent only speaks grammar variant G0, whereas 1.0 means that the agent only speaks grammar variant G1.  For grammar values between 0.0 and 1.0, an agent may speak either G0 or G1, with some probability.  The probability is determined by a "production function", the shape of which depends on the CATEGORICALNESS parameter, as well as a 'bias' which can vary between agents (this 'bias' may be distributed in various ways, as shall be discussed in more detail later).  It is called a "production" function because it maps a tendency toward one grammar or another into a probability of producing a token for one grammar or the other.  If CATEGORICALNESS = 0, the production function is linear, meaning that agents produce G1 tokens with probability given directly by their grammar value, and G0 tokens otherwise.  If CATEGORICALNESS > 0
 the production function is nonlinear (in particular, sigmoidal).   The agent's bias determines the point at which the production function crosses the line Y = X, which may be considered repelling point, because if the agent's grammar value is below this repelling point and the agent were talking only to itself, it would eventually end up with grammar value 0.0, but if the grammar value started above this point, it would eventually end up at grammar value 1.0.  The larger the CATEGORICALNESS parameter, the closer the sigmoidal production function is to a step function, and at CATEGORICALNESS = 100, the production function actually becomes a step function.  This means that if the agents grammar value is above a point (determined by its bias) it will only speak G1, and if it is below that point, it will only speak G0.  In this case, agents are completely categorical about their speech, and are unwilling to mix the usage of two the two competing grammars.
 
 Over time each agent updates the state of its internal grammar value based on the tokens it is hearing from neighboring agents in the social network.  More specifically, in each tick, each agent first produces a single token probabilistically, based on their grammar state and their production function.  Each agent then updates their grammar state to be closer to the mean grammar value that they heard from all of their neighbors.  We use what is sometimes called "alpha learning", whereby the new grammar state is a weighted average  of the old grammar state with the mean of all the tokens produced by the neighbors.  Thus, high degree nodes (agents) in the network (which we refer to as "influentials") are considered to be "heard" by many more nodes than low-degree nodes.  However, the LEARNING-RATE (rate of change from the current grammar state toward the perceived grammar of the neighbors) of all of the nodes is the same.
@@ -1293,7 +1275,7 @@ As an example, an agent that start with grammar value 1.0 will certainly produce
 
 ## HOW TO USE IT / MODEL PARAMETERS
 
-While the basic mechanics of the model are described simply above, there are numerous parameters, and ways to initialize or setup the model, to address different questions.  
+While the basic mechanics of the model are described simply above, there are numerous parameters, and ways to initialize or setup the model, to address different questions.
 Here is a brief explanation of each parameter of control for the model, and how they related to the initialization and running of the model.
 
 The social network structure (NETWORK-TYPE) may be initialized in several ways:
@@ -1304,7 +1286,7 @@ The social network structure (NETWORK-TYPE) may be initialized in several ways:
 
 The network is created with the specified NUMBER-OF-NODES and AVERAGE-NODE-DEGREE.
 
-By default, nodes start with an internal grammar value of 0.0, meaning they have no chance of ever using variant G1.  The NUM-START-WITH-G1 parameter, however, controls the number of nodes in the network that start with grammar value 1.0.  
+By default, nodes start with an internal grammar value of 0.0, meaning they have no chance of ever using variant G1.  The NUM-START-WITH-G1 parameter, however, controls the number of nodes in the network that start with grammar value 1.0.
 
 If START-TARGET = "none", the agents are randomly chosen to start with grammar value 1.0.  But if START-TAGET = "influentials", then the 1.0 grammar value is assigned by starting with the START-TARGET-RANK most influential agent and going down in order.  For instance, if START-TARGET-RANK = 9, and NUM-START-WITH-G1 = 3, then the 10th, 11th, and 12th most influential agents (highest-degree nodes) will be assigned grammar value 1.0.
 
@@ -1314,7 +1296,7 @@ Additionally, all agents' biases are affected by the GLOBAL-BIAS parameter.
 
 The BIAS-TARGET parameter controls how bias is distributed in the social network.  If BIAS-TARGET = "none", then bias is randomly distributed.  If BIAS-TARGET = "nearby", then bias is distributed in sorted order (positive bias down to negative) starting with the most influential agent, down to the least influential agent.  If BIAS-TARGET = "nearby", then bias is distributed in sorted order outward from a random one of the agents that is starting with the G1 grammar.  This last method has the effect of creating a very favorable initial audience for this G1 speakers, and (from our experiments) appears to greatly improve the chances of a language cascade.
 
-The preceding discussion is most relevant for the "spatial", "random", and "preferential" network types.  The grammar states and biases for the "two-communities" network-type are initialized according to different rules.  In this case, two "preferential" network communities are created - one consisting initially of all G0 speakers and the other consisting of all G1 speakers.  The COMA-START and COMB-START parameters control whether the bias is distributed in such a way that the community is more ripe for a language cascade to occur, or more resistant against change to the status quo.  More specifically, in each community, the biases are distributed outward from a random node in sorted order (either up, or down, depending). In Community A, if the bias is distributed outward starting with positive bias (supporting G1) down to negative bias, then the network will be more "ripe" for a G1 cascade.  On the other hand, distributing bias from negative bias (supporting G0) outward to positive bias will create a configuration that is more resistant to change.  For Community B (which starts with G1 prevalent) the situation is reversed, but otherwise exactly the same.  
+The preceding discussion is most relevant for the "spatial", "random", and "preferential" network types.  The grammar states and biases for the "two-communities" network-type are initialized according to different rules.  In this case, two "preferential" network communities are created - one consisting initially of all G0 speakers and the other consisting of all G1 speakers.  The COMA-START and COMB-START parameters control whether the bias is distributed in such a way that the community is more ripe for a language cascade to occur, or more resistant against change to the status quo.  More specifically, in each community, the biases are distributed outward from a random node in sorted order (either up, or down, depending). In Community A, if the bias is distributed outward starting with positive bias (supporting G1) down to negative bias, then the network will be more "ripe" for a G1 cascade.  On the other hand, distributing bias from negative bias (supporting G0) outward to positive bias will create a configuration that is more resistant to change.  For Community B (which starts with G1 prevalent) the situation is reversed, but otherwise exactly the same.
 
 The links between these two communities are chosen based on the COMA-BRIDGE-BIAS and COMB-BRIDGE-BIAS parameters.  If COMA-BRIDGE-BIAS = 0, then the agents in Community A that are most biased towards G0 will be chosen as "bridge" nodes - meaning they will be linked to the other community.  If COMA-BRIDGE-BIAS = 1, then the agents most biased towards G1 will be bridge nodes.  Similarly, COMB-BRIDGE-BIAS determines which nodes will be bridge nodes in Community B.
 
@@ -1631,7 +1613,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.2.0
+NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -3731,6 +3713,354 @@ NetLogo 5.2.0
       <value value="80"/>
       <value value="90"/>
     </enumeratedValueSet>
+  </experiment>
+  <experiment name="LC_karate_humans_random" repetitions="100" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;none&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;flat&quot;"/>
+      <value value="&quot;uniform-symmetric&quot;"/>
+      <value value="&quot;normal-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="start-target-rank" first="0" step="1" last="33"/>
+    <enumeratedValueSet variable="start-target">
+      <value value="&quot;influentials&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="LC_karate_robot_random" repetitions="1" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;none&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;flat&quot;"/>
+      <value value="&quot;uniform-symmetric&quot;"/>
+      <value value="&quot;normal-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
+    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
+  </experiment>
+  <experiment name="LC_karate_humans_nearby" repetitions="1" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;nearby&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;flat&quot;"/>
+      <value value="&quot;uniform-symmetric&quot;"/>
+      <value value="&quot;normal-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="start-target-rank" first="0" step="1" last="33"/>
+    <enumeratedValueSet variable="start-target">
+      <value value="&quot;influentials&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="LC_karate_humans_influentials" repetitions="1" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;influentials&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;flat&quot;"/>
+      <value value="&quot;uniform-symmetric&quot;"/>
+      <value value="&quot;normal-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="start-target-rank" first="0" step="1" last="33"/>
+    <enumeratedValueSet variable="start-target">
+      <value value="&quot;influentials&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="LC_karate_robot_nearby" repetitions="1" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;nearby&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;flat&quot;"/>
+      <value value="&quot;uniform-symmetric&quot;"/>
+      <value value="&quot;normal-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
+    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
+  </experiment>
+  <experiment name="LC_karate_robot_influentials" repetitions="1" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;influentials&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;flat&quot;"/>
+      <value value="&quot;uniform-symmetric&quot;"/>
+      <value value="&quot;normal-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
+    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
   </experiment>
 </experiments>
 @#$#@#$#@

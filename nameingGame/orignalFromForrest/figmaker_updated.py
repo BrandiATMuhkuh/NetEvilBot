@@ -39,6 +39,7 @@ modifiedJet = matplotlib.colors.LinearSegmentedColormap('modifiedJet', cdict, 25
 
 def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm.jet,showColorBar=True,label_font_size=7):
 	""" from stripped .csv files"""
+
 	X = dat['degree']
 	Y = dat['phi']
 	xi = float64(array(sorted(set(X))))
@@ -60,7 +61,7 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 		#reduce colorbar ticks font size
 		for ticklabel in c.ax.get_yticklabels():
 			ticklabel.set_size(12)
-			
+
 	clim(0.0,1.0)
 	if (contourLines > 0):
 		contour(xi,yi,zi,contourLines,linewidths=1.5,colors='k',extent=extent)
@@ -69,7 +70,7 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 #	ylabel(r"$\phi$ {\small (in  $^\circ$)}",fontsize=10)
 	ylabel(r"$\phi$",fontsize=label_font_size*10/7)
 	yticks([45,60,75,90])
-	
+
 	#HACK to make the axes ticks go outward instead of inward
 	ax = gca()
 	lines = ax.get_xticklines()
@@ -90,7 +91,7 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 			line.set_visible(False)
 	for label in labels:
 		label.set_x(-0.02)
-	
+
 
 
 
@@ -99,15 +100,15 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 		#~ dat = csv2rec("LC_target_%s_hires.stripped.csv"%target)
 		#~ for threshold in [0.0001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.9999]:
 			#~ datSubset = dat[dat['mean_grammar']>=threshold]
-			#~ figure()			
+			#~ figure()
 			#~ make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=modifiedJet)
 			#~ title("hi-res target %s, $P(mean final grammar >= %s)$"%(target,threshold))
 			#~ savefig("%s_cascadethreshold%s_raw.png"%(target,threshold),dpi=150)
-			#~ figure()			
+			#~ figure()
 			#~ make2DHistogram(dat,datSubset,interpolation="bilinear",contourLines=0,cmap=modifiedJet)
 			#~ title("hi-res target %s, $P(mean final grammar >= %s)$"%(target,threshold))
 			#~ savefig("%s_cascadethreshold%s_smooth.png"%(target,threshold),dpi=150)
-			#~ figure()			
+			#~ figure()
 			#~ make2DHistogram(dat,datSubset,interpolation="bilinear",contourLines=5,cmap=modifiedJet)
 			#~ title("hi-res target %s, $P(mean final grammar >= %s)$"%(target,threshold))
 			#~ savefig("%s_cascadethreshold%s_smoothlines.png"%(target,threshold),dpi=150)
@@ -117,11 +118,11 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 	#~ targets = ["random","nearby","influentials"]
 	#~ for target in targets:
 		#~ dats[target] = csv2rec("LC_target_%s_hires.stripped.csv"%target)
-#~ 
+#~
 	#~ for threshold in [0.0001, 0.5, 0.9, 0.9999]:
 		#~ fig = figure(figsize=(8,3.5))
 		#~ subplot(1,3,1)
-		#~ 
+		#~
 		#~ for i in range(0,len(targets)):
 			#~ target = targets[i]
 			#~ ax = subplot(1,3,i+1)
@@ -135,17 +136,17 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 		#~ fig.axes[3].set_position([0.89,0.15,0.6,0.62])
 		#~ suptitle(r"$P(\bar{g}(t_{final}) \geq %s)$"%threshold, y=0.95,fontsize=16)
 		#~ savefig("fig_cascadethreshold%s.pdf"%threshold,dpi=300)
-#~ 
+#~
 #~ def makeSubplotFigures2():
 	#~ dats = {}
 	#~ targets = ["random","nearby","influentials"]
 	#~ for target in targets:
 		#~ dats[target] = csv2rec("LC_target_%s_hires.stripped.csv"%target)
-#~ 
+#~
 	#~ for target in targets:
 		#~ fig = figure(figsize=(8,3.5))
 		#~ subplot(1,3,1)
-		#~ 
+		#~
 		#~ for i,threshold,tlabel in [(0,0.0001,"survival"),(1,0.5,"dominance"),(2,0.9999,"completion")]:
 			#~ ax = subplot(1,3,i+1)
 			#~ datSubset = dats[target][dats[target]['mean_grammar']>=threshold]
@@ -153,7 +154,7 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 			#~ if (i>0):
 				#~ ax.yaxis.set_ticklabels([])
 				#~ ax.yaxis.label.set_text("")
-			#~ title("%s"%(tlabel))  # r"$P(\bar{g}(t_{final}) \geq %s)$"			
+			#~ title("%s"%(tlabel))  # r"$P(\bar{g}(t_{final}) \geq %s)$"
 		#~ subplots_adjust(0.12,0.15,0.87,0.77,0.1,0.2)
 		#~ fig.axes[3].set_position([0.89,0.15,0.6,0.62])
 		#~ suptitle("%s bias distribution"%fixName(target) , y=0.95,fontsize=16)
@@ -169,7 +170,7 @@ def makeSubplotFigures3():
 	for figrow,target in enumerate(targets):
 		subplot(3,3,1)
 		subplots_adjust(left=0.12,bottom=0.09,right=0.87,top=0.94,wspace=0.2,hspace=0.3)
-		
+
 		for i,threshold,tlabel in [(0,0.0001,"survival"),(1,0.5,"dominance"),(2,0.9999,"completion")]:
 			ax = subplot(3,3,figrow*3 + i+1)
 			datSubset = dats[target][dats[target]['mean_grammar']>=threshold]
@@ -180,13 +181,13 @@ def makeSubplotFigures3():
 			xticks(fontsize=10)
 			yticks(fontsize=10)
 			if (figrow == 0):
-				title("%s"%(tlabel), fontsize=12)  # r"$P(\bar{g}(t_{final}) \geq %s)$"			
+				title("%s"%(tlabel), fontsize=12)  # r"$P(\bar{g}(t_{final}) \geq %s)$"
 			if (figrow != 2):
 				xlabel("")
 		#fig.axes[3].set_position([0.89,0.15,0.6,0.62])
 		#suptitle("%s bias distribution"%fixName(target) , y=0.95,fontsize=16)
 		#figtext(0.5, [0.68, 0.37, 0.04][figrow], ["a) ","b) ","c) "][figrow] + fixName(target) + " scenario", ha="center", fontsize=9)
-                
+
                 my_font = FontProperties()
                 my_font.set_weight('bold')
 		figtext(0.03, [0.93, 0.62, 0.305][figrow], [r"A",r"B",r"C"][figrow], ha="center", fontsize=18, fontproperties=my_font)
@@ -208,7 +209,7 @@ def makeDriftPlot():
 	dats = [csv2rec("LC_target_%s.stripped.csv"%target) for target in targets]
 	datSubsets = [dat[dat['phi']==45.0] for dat in dats]
 	dat45 = concatenate(datSubsets)
-	print "Number of runs averaged for each degree = %s"%len(dat45[dat45['degree']==2]) 
+	print "Number of runs averaged for each degree = %s"%len(dat45[dat45['degree']==2])
 	figure(figsize=(3.27,2.4))
 	subplots_adjust(left=.18, bottom=.18, top=0.94, right=0.94)
 	for threshold,tlabel,col,marker,ms in [(0.0001,"survival","blue","^",6),(0.5,"dominance","green","o",4),(0.9999,"completion","red","v",6)]:
@@ -221,13 +222,13 @@ def makeDriftPlot():
 		yRegress = polyval([a,b],xs)
 		plot(xs[[0,-1]],yRegress[[0,-1]],':',color=col,marker='None')
 		r2 = linearRegressionR2Val(xs,ys)
-		text(xs[40]-3,yRegress[40]+0.004,r"$R^2 \approx %.2f$"%r2,fontsize=8,color=col,ha='right',zorder=10)
+		text(xs[9]-3,yRegress[9]+0.004,r"$R^2 \approx %.2f$"%r2,fontsize=8,color=col,ha='right',zorder=10)
 	pylab.rcParams["legend.fontsize"] = 10
 	legend(loc="upper left",numpoints=1,handlelength=1,handletextpad=0.5,markerscale=1.5)
 	ylim(-0.005,0.14)
 	xlim(0,56)
-	xticks(fontsize=9)	
-	yticks(fontsize=9)	
+	xticks(fontsize=9)
+	yticks(fontsize=9)
 	xlabel("innovator degree",fontsize=12)
 	ylabel("Probability",fontsize=12)
 	#title(r"`Drifting' cascades ($\phi = 45$)")
@@ -255,15 +256,15 @@ def makeDriftPlot():
 			#~ xs = float64(array(range(len(b))[2:]))
 			#~ ys = b[2:] / numSimulationsPerDegree
 			#~ if plotChoice != "p(c|d)":
-				#~ ys = ys * degreePDF[2:56] 
+				#~ ys = ys * degreePDF[2:56]
 				#~ if plotChoice == "p(d|c)":
 					#~ ys = ys / sum(b / numSimulationsPerDegree * degreePDF[:56] )
 					#~ print "p(c|d): sum(ys)=%s (should be close to 1)"%sum(ys)
 			#~ plot(xs,ys,label=tlabel, color=col, marker=marker,ms=ms)#,linestyle='None')
 		#~ #ylim(-0.005,0.14)
 		#~ xlim(0,56)
-		#~ xticks(fontsize=14)	
-		#~ yticks(fontsize=14)	
+		#~ xticks(fontsize=14)
+		#~ yticks(fontsize=14)
 		#~ xlabel("innovator degree",fontsize=15)
 		#~ if plotChoice=="p(c|d)":
 			#~ legend(loc="lower right",numpoints=1,handlelength=1,handletextpad=0.5,markerscale=1.5)
@@ -297,15 +298,15 @@ def makeChangeFromBelowPlot():
 		xs = float64(array(range(len(b))[2:]))
 		ys = b[2:] / numSimulationsPerDegree
 		if plotChoice != "p(c|d)":
-			ys = ys * degreePDF[2:56] 
+			ys = ys * degreePDF[2:56]
 			if plotChoice == "p(d|c)":
 				ys = ys / sum(b / numSimulationsPerDegree * degreePDF[:56] )
 				print "p(c|d): sum(ys)=%s (should be close to 1)"%sum(ys)
 		plot(xs,ys,fmtStr,label=lineLabel)#,linestyle='None')
 		#ylim(-0.005,0.14)
 		xlim(0,56)
-		xticks(fontsize=8)	
-		yticks(fontsize=8)	
+		xticks(fontsize=8)
+		yticks(fontsize=8)
 		xlabel("innovator degree",fontsize=10)
 		ylabel("Probability",fontsize=10)
 		pylab.rcParams["legend.fontsize"] = 10
@@ -321,14 +322,14 @@ def makeChangeFromBelowPlot():
 #~ def makeChangeFromBelowHistograms():
 	#~ dat = csv2rec("LC_target_nearby_finegamma.stripped.csv")
 	#~ dat60 = dat[dat['phi']==60.0]
-	#~ print "Number of runs averaged for each degree = %s"%len(dat60[dat60['degree']==4]) 
-#~ 
+	#~ print "Number of runs averaged for each degree = %s"%len(dat60[dat60['degree']==4])
+#~
 	#~ figure()
-#~ 
+#~
 	#~ hist([dat60[dat60['degree']==10]['mean_grammar'],dat60[dat60['degree']==55]['mean_grammar']],label=['innovator degree = 10','innovator degree = 55'],weights=[[(1/1000.0)]*1000]*2,color=['red','blue'],ec='None',rwidth=1,bins=40)
-#~ 
-	#~ xticks(fontsize=14)	
-	#~ yticks(fontsize=14)	
+#~
+	#~ xticks(fontsize=14)
+	#~ yticks(fontsize=14)
 	#~ xlabel("mean final grammar state",fontsize=15)
 	#~ ylabel("frequency",fontsize=15)
 	#~ title(r"\textit{nearby} bias distribution, $\phi = 60$")
@@ -343,25 +344,20 @@ def colormapTest():
 	dat = csv2rec("LC_target_%s_hires.stripped.csv"%target)
 	for cmap in [ cm.autumn, cm.bone, cm.cool, cm.copper, cm.flag, cm.gray, cm.hot, cm.hsv, cm.jet, cm.pink, cm.prism, cm.spring, cm.summer, cm.winter, cm.spectral ]:
 		datSubset = dat[dat['mean_grammar']>=threshold]
-		figure()			
+		figure()
 		make2DHistogram(dat,datSubset,interpolation='bilinear',contourLines=0,cmap=cmap)
 		title("hi-res target %s, $P(mean final grammar >= %s)$ [%s]"%(target,threshold,cmap.name))
 		savefig("colorstest_%s.png"%cmap.name,dpi=150)
 
-###makePlots()
-###makeSubplotFigures()
+#makePlots()
+##makeSubplotFigures()
 ###makeSubplotFigures2()
 
-#makeSubplotFigures3()
+makeSubplotFigures3()
 
-makeDriftPlot()
+#makeDriftPlot() ##working (but with 9 instaed of 40 yRegress[10])
 #makeChangeFromBelowPlot()
 
 #makeChangeFromBelowHistograms() #not used in paper?
-
-###make2DHistogram("LC_target_influentials_hires.stripped.csv","hi-res target influentials, $P(mean final grammar >= 0.0001)$")
+#make2DHistogram(csv2rec("LC_target_influentials_hires.stripped.csv"),"hi-res target influentials, $P(mean final grammar >= 0.0001)$")
 ###make2DHistogram("LC_target_nearby_hires.stripped.csv","hi-res target nearby, $P(mean final grammar >= 0.0001)$")
-
-
-
-
