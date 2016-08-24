@@ -1,0 +1,30 @@
+uploades
+
+scp headlessStart.sh jbrandsetter@mace.phon.ox.ac.uk:~/headlessStart.sh
+scp headlessStart.sh jbrandsetter@bay.phon.ox.ac.uk:~/headlessStart.sh
+scp headlessStart.sh jbrandsetter@saffron.phon.ox.ac.uk:~/headlessStart.sh
+scp headlessStart.sh jbrandsetter@cumin.phon.ox.ac.uk:~/headlessStart.sh
+scp headlessStart.sh jbrandsetter@wasabi.phon.ox.ac.uk:~/headlessStart.sh
+scp headlessStart.sh jbrandsetter@clove.phon.ox.ac.uk:~/headlessStart.sh
+
+
+run task
+ ./headlessStart.sh -b LC_karate_robot_nearby
+
+mace: LC_karate_humans_random
+./headlessStart.sh -b LC_karate_humans_random
+
+bay: LC_karate_humans_nearby
+./headlessStart.sh -b LC_karate_humans_nearby
+
+saffron: LC_karate_humans_influentials
+./headlessStart.sh -b LC_karate_humans_influentials
+
+cumin: LC_karate_robot_random
+./headlessStart.sh -b LC_karate_robot_random
+
+wasabi: LC_karate_robot_nearby
+./headlessStart.sh -b LC_karate_robot_nearby
+
+clove: LC_karate_robot_influentials
+./headlessStart.sh -b LC_karate_robot_influentials
