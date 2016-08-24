@@ -1613,7 +1613,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.3
+NetLogo 5.3.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -3714,7 +3714,7 @@ NetLogo 5.3
       <value value="90"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_humans_random" repetitions="100" runMetricsEveryStep="false">
+  <experiment name="LC_karate_humans_random" repetitions="1000" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -3830,7 +3830,7 @@ setup new-seed</setup>
     <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
     <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
   </experiment>
-  <experiment name="LC_karate_humans_nearby" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_humans_nearby" repetitions="1000" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -3889,7 +3889,7 @@ setup new-seed</setup>
       <value value="&quot;influentials&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_humans_influentials" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_humans_influentials" repetitions="1000" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
