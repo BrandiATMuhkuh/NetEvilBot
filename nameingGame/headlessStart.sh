@@ -50,13 +50,11 @@ done
 
 #exit
 
-COMMAND="/home/jbr134/opt/netlogo/app/netlogo-headless.sh \
---model ${MYPWD}/${NETVERSION}/languagecascades/OxfordLanguageCascades.nlogo \
+COMMAND="${MYPWD}/netlogo-5.3.1-64/app/netlogo-headless.sh \
+--model ${MYPWD}/languagecascades/OxfordLanguageCascades.nlogo \
 --experiment ${BEHAVIOR} \
---table ${MYPWD}/outputFolder/${BEHAVIOR}.csv \
+--table ${MYPWD}/outputFolder/${BEHAVIOR}.table.csv \
 --threads $MYNPROC"
-
-#--spreadsheet ${MYPWD}/outputFolder/${BEHAVIOR}.csv \
 
 echo "Running this command: $COMMAND"
 eval $COMMAND
