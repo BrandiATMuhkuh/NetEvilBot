@@ -8,6 +8,14 @@ scp headlessStart.sh jbrandsetter@wasabi.phon.ox.ac.uk:~/headlessStart.sh
 scp headlessStart.sh jbrandsetter@clove.phon.ox.ac.uk:~/headlessStart.sh
 
 
+scp OxfordLanguageCascades.nlogo jbrandsetter@mace.phon.ox.ac.uk:~/languagecascades/OxfordLanguageCascades.nlogo
+scp OxfordLanguageCascades.nlogo jbrandsetter@bay.phon.ox.ac.uk:~/languagecascades/OxfordLanguageCascades.nlogo
+scp OxfordLanguageCascades.nlogo jbrandsetter@saffron.phon.ox.ac.uk:~/languagecascades/OxfordLanguageCascades.nlogo
+scp OxfordLanguageCascades.nlogo jbrandsetter@cumin.phon.ox.ac.uk:~/languagecascades/OxfordLanguageCascades.nlogo
+scp OxfordLanguageCascades.nlogo jbrandsetter@wasabi.phon.ox.ac.uk:~/languagecascades/OxfordLanguageCascades.nlogo
+scp OxfordLanguageCascades.nlogo jbrandsetter@clove.phon.ox.ac.uk:~/languagecascades/OxfordLanguageCascades.nlogo
+
+
 run task
  ./headlessStart.sh -b LC_karate_robot_nearby
 

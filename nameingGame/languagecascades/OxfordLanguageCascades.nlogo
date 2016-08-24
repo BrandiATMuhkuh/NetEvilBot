@@ -57,11 +57,28 @@ to setup [ rseed ]
 
   ifelse (start-target = "influentials")
   [
+
     let sortednodes sort-by [[count link-neighbors] of ?1 > [count link-neighbors] of ?2 ] nodes
-    repeat start-target-rank
-     [ set sortednodes but-first sortednodes ]
-    set outbreak-starting-nodes (turtle-set sublist sortednodes 0 num-start-with-G1)
-    ask outbreak-starting-nodes [ set grammar 1.0 ]
+    let cutend num-start-with-G1
+    let startrepeat start-target-rank
+
+    ;Fill this list with higest robot rank or human rank
+    ifelse num-start-with-G1 = 0 and num-of-robots > 0
+    [
+      set cutend num-of-robots
+      set startrepeat num-of-robots
+
+      ][
+
+       repeat startrepeat
+       [ set sortednodes but-first sortednodes ]
+      ]
+
+    set outbreak-starting-nodes (turtle-set sublist sortednodes 0 cutend)
+
+    ask outbreak-starting-nodes [
+      set grammar 1.0
+      ]
   ][
     set outbreak-starting-nodes n-of num-start-with-G1 nodes
     ask outbreak-starting-nodes
@@ -1064,7 +1081,7 @@ SWITCH
 483
 visuals?
 visuals?
-0
+1
 1
 -1000
 
@@ -1076,7 +1093,7 @@ CHOOSER
 bias-dist
 bias-dist
 "flat" "uniform-symmetric" "normal-symmetric"
-2
+1
 
 MONITOR
 865
@@ -1097,7 +1114,7 @@ CHOOSER
 bias-target
 bias-target
 "influentials" "nearby" "none"
-2
+0
 
 CHOOSER
 40
@@ -1236,7 +1253,7 @@ robot-learning-rate
 robot-learning-rate
 0
 1
-0.06
+0
 0.01
 1
 NIL
@@ -1250,7 +1267,7 @@ CHOOSER
 robot-start-target
 robot-start-target
 "random" "betweenness-centrality" "closeness-centrality" "page-rank"
-1
+2
 
 @#$#@#$#@
 ## NOTES
@@ -3714,7 +3731,7 @@ NetLogo 5.3.1
       <value value="90"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_humans_random" repetitions="1000" runMetricsEveryStep="false">
+  <experiment name="LC_karate_humans_random" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -3832,7 +3849,7 @@ setup new-seed</setup>
       <value value="&quot;betweenness-centrality&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_humans_nearby" repetitions="1000" runMetricsEveryStep="false">
+  <experiment name="LC_karate_humans_nearby" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -3891,7 +3908,7 @@ setup new-seed</setup>
       <value value="&quot;influentials&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_humans_influentials" repetitions="1000" runMetricsEveryStep="false">
+  <experiment name="LC_karate_humans_influentials" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -3948,183 +3965,6 @@ setup new-seed</setup>
     <steppedValueSet variable="start-target-rank" first="0" step="1" last="33"/>
     <enumeratedValueSet variable="start-target">
       <value value="&quot;influentials&quot;"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="LC_karate_robot_nearby_pr_cl" repetitions="100" runMetricsEveryStep="false">
-    <setup>__clear-all-and-reset-ticks
-setup new-seed</setup>
-    <go>go</go>
-    <timeLimit steps="10000"/>
-    <exitCondition>converged?</exitCondition>
-    <metric>cascaded?</metric>
-    <metric>cascaded90?</metric>
-    <metric>converged?</metric>
-    <metric>round (mean [grammar] of nodes)</metric>
-    <metric>mean [grammar] of nodes</metric>
-    <metric>standard-deviation [grammar] of nodes</metric>
-    <metric>min [grammar] of nodes</metric>
-    <metric>max [grammar] of nodes</metric>
-    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
-    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
-    <metric>initial-fraction-influenced-by-minority</metric>
-    <metric>seed</metric>
-    <metric>([network-node-id] of instigator)</metric>
-    <metric>degree-of-instigator</metric>
-    <metric>rank-of-instigator</metric>
-    <metric>[closeness-centrality] of instigator</metric>
-    <metric>[betweenness-centrality] of instigator</metric>
-    <metric>[eigenvector-centrality] of instigator</metric>
-    <metric>[clustering-coefficient] of instigator</metric>
-    <metric>[avg-neighbor-degree] of instigator</metric>
-    <metric>unique-filename</metric>
-    <enumeratedValueSet variable="bias-target">
-      <value value="&quot;nearby&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
-    <enumeratedValueSet variable="num-start-with-G1">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="network-type">
-      <value value="&quot;from-file&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="network-filename">
-      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="learning-rate">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="global-bias">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="bias-dist">
-      <value value="&quot;uniform-symmetric&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="visuals?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
-    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
-    <enumeratedValueSet variable="robot-start-target">
-      <value value="&quot;closeness-centrality&quot;"/>
-      <value value="&quot;page-rank&quot;"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="LC_karate_robot_influentials_be_ra" repetitions="100" runMetricsEveryStep="false">
-    <setup>__clear-all-and-reset-ticks
-setup new-seed</setup>
-    <go>go</go>
-    <timeLimit steps="10000"/>
-    <exitCondition>converged?</exitCondition>
-    <metric>cascaded?</metric>
-    <metric>cascaded90?</metric>
-    <metric>converged?</metric>
-    <metric>round (mean [grammar] of nodes)</metric>
-    <metric>mean [grammar] of nodes</metric>
-    <metric>standard-deviation [grammar] of nodes</metric>
-    <metric>min [grammar] of nodes</metric>
-    <metric>max [grammar] of nodes</metric>
-    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
-    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
-    <metric>initial-fraction-influenced-by-minority</metric>
-    <metric>seed</metric>
-    <metric>([network-node-id] of instigator)</metric>
-    <metric>degree-of-instigator</metric>
-    <metric>rank-of-instigator</metric>
-    <metric>[closeness-centrality] of instigator</metric>
-    <metric>[betweenness-centrality] of instigator</metric>
-    <metric>[eigenvector-centrality] of instigator</metric>
-    <metric>[clustering-coefficient] of instigator</metric>
-    <metric>[avg-neighbor-degree] of instigator</metric>
-    <metric>unique-filename</metric>
-    <enumeratedValueSet variable="bias-target">
-      <value value="&quot;influentials&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
-    <enumeratedValueSet variable="num-start-with-G1">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="network-type">
-      <value value="&quot;from-file&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="network-filename">
-      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="learning-rate">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="global-bias">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="bias-dist">
-      <value value="&quot;uniform-symmetric&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="visuals?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
-    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
-    <enumeratedValueSet variable="robot-start-target">
-      <value value="&quot;random&quot;"/>
-      <value value="&quot;betweenness-centrality&quot;"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="LC_karate_robot_influentials_pr_cl" repetitions="100" runMetricsEveryStep="false">
-    <setup>__clear-all-and-reset-ticks
-setup new-seed</setup>
-    <go>go</go>
-    <timeLimit steps="10000"/>
-    <exitCondition>converged?</exitCondition>
-    <metric>cascaded?</metric>
-    <metric>cascaded90?</metric>
-    <metric>converged?</metric>
-    <metric>round (mean [grammar] of nodes)</metric>
-    <metric>mean [grammar] of nodes</metric>
-    <metric>standard-deviation [grammar] of nodes</metric>
-    <metric>min [grammar] of nodes</metric>
-    <metric>max [grammar] of nodes</metric>
-    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
-    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
-    <metric>initial-fraction-influenced-by-minority</metric>
-    <metric>seed</metric>
-    <metric>([network-node-id] of instigator)</metric>
-    <metric>degree-of-instigator</metric>
-    <metric>rank-of-instigator</metric>
-    <metric>[closeness-centrality] of instigator</metric>
-    <metric>[betweenness-centrality] of instigator</metric>
-    <metric>[eigenvector-centrality] of instigator</metric>
-    <metric>[clustering-coefficient] of instigator</metric>
-    <metric>[avg-neighbor-degree] of instigator</metric>
-    <metric>unique-filename</metric>
-    <enumeratedValueSet variable="bias-target">
-      <value value="&quot;influentials&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
-    <enumeratedValueSet variable="num-start-with-G1">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="network-type">
-      <value value="&quot;from-file&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="network-filename">
-      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="learning-rate">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="global-bias">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="bias-dist">
-      <value value="&quot;uniform-symmetric&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="visuals?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
-    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
-    <enumeratedValueSet variable="robot-start-target">
-      <value value="&quot;closeness-centrality&quot;"/>
-      <value value="&quot;page-rank&quot;"/>
     </enumeratedValueSet>
   </experiment>
   <experiment name="LC_karate_robot_nearby_be_ra" repetitions="100" runMetricsEveryStep="false">
@@ -4186,6 +4026,65 @@ setup new-seed</setup>
       <value value="&quot;betweenness-centrality&quot;"/>
     </enumeratedValueSet>
   </experiment>
+  <experiment name="LC_karate_robot_influentials_be_ra" repetitions="100" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;influentials&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;uniform-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
+    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
+    <enumeratedValueSet variable="robot-start-target">
+      <value value="&quot;random&quot;"/>
+      <value value="&quot;betweenness-centrality&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
   <experiment name="LC_karate_robot_random_pr_cl" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
@@ -4215,6 +4114,124 @@ setup new-seed</setup>
     <metric>unique-filename</metric>
     <enumeratedValueSet variable="bias-target">
       <value value="&quot;none&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;uniform-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
+    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
+    <enumeratedValueSet variable="robot-start-target">
+      <value value="&quot;closeness-centrality&quot;"/>
+      <value value="&quot;page-rank&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="LC_karate_robot_nearby_pr_cl" repetitions="100" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;nearby&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
+    <enumeratedValueSet variable="num-start-with-G1">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-type">
+      <value value="&quot;from-file&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="network-filename">
+      <value value="&quot;AdHealthForNetLogo/karate.txt&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="learning-rate">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="global-bias">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="bias-dist">
+      <value value="&quot;uniform-symmetric&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="visuals?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="num-of-robots" first="1" step="1" last="33"/>
+    <steppedValueSet variable="robot-learning-rate" first="0" step="0.01" last="0.1"/>
+    <enumeratedValueSet variable="robot-start-target">
+      <value value="&quot;closeness-centrality&quot;"/>
+      <value value="&quot;page-rank&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="LC_karate_robot_influentials_pr_cl" repetitions="100" runMetricsEveryStep="false">
+    <setup>__clear-all-and-reset-ticks
+setup new-seed</setup>
+    <go>go</go>
+    <timeLimit steps="10000"/>
+    <exitCondition>converged?</exitCondition>
+    <metric>cascaded?</metric>
+    <metric>cascaded90?</metric>
+    <metric>converged?</metric>
+    <metric>round (mean [grammar] of nodes)</metric>
+    <metric>mean [grammar] of nodes</metric>
+    <metric>standard-deviation [grammar] of nodes</metric>
+    <metric>min [grammar] of nodes</metric>
+    <metric>max [grammar] of nodes</metric>
+    <metric>count nodes with [ grammar &gt; 0.5 ]</metric>
+    <metric>count nodes with [ grammar &gt; 0.9 ]</metric>
+    <metric>initial-fraction-influenced-by-minority</metric>
+    <metric>seed</metric>
+    <metric>([network-node-id] of instigator)</metric>
+    <metric>degree-of-instigator</metric>
+    <metric>rank-of-instigator</metric>
+    <metric>[closeness-centrality] of instigator</metric>
+    <metric>[betweenness-centrality] of instigator</metric>
+    <metric>[eigenvector-centrality] of instigator</metric>
+    <metric>[clustering-coefficient] of instigator</metric>
+    <metric>[avg-neighbor-degree] of instigator</metric>
+    <metric>unique-filename</metric>
+    <enumeratedValueSet variable="bias-target">
+      <value value="&quot;influentials&quot;"/>
     </enumeratedValueSet>
     <steppedValueSet variable="categoricalness-angle" first="45" step="1" last="90"/>
     <enumeratedValueSet variable="num-start-with-G1">
