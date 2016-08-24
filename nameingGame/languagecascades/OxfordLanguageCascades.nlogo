@@ -3773,7 +3773,7 @@ setup new-seed</setup>
       <value value="&quot;influentials&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_robot_random_be_ra" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_robot_random_be_ra" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -3950,7 +3950,7 @@ setup new-seed</setup>
       <value value="&quot;influentials&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_robot_nearby_pr_cl" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_robot_nearby_pr_cl" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -4009,7 +4009,7 @@ setup new-seed</setup>
       <value value="&quot;page-rank&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_robot_influentials_be_ra" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_robot_influentials_be_ra" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -4068,7 +4068,7 @@ setup new-seed</setup>
       <value value="&quot;betweenness-centrality&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_robot_influentials_pr_cl" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_robot_influentials_pr_cl" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -4127,7 +4127,7 @@ setup new-seed</setup>
       <value value="&quot;page-rank&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_robot_nearby_be_ra" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_robot_nearby_be_ra" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
@@ -4186,7 +4186,7 @@ setup new-seed</setup>
       <value value="&quot;betweenness-centrality&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="LC_karate_robot_random_pr_cl" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="LC_karate_robot_random_pr_cl" repetitions="100" runMetricsEveryStep="false">
     <setup>__clear-all-and-reset-ticks
 setup new-seed</setup>
     <go>go</go>
