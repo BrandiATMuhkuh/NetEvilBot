@@ -13,10 +13,10 @@ yedges = []
 conn = sqlite3.connect('output/combined.sqlite')
 c = conn.cursor()
 
-#selections = selRobots = c.execute('select "categoricalness-angle" as angle, "mean[grammar]ofnodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01"')
-selections = selRobotsBetween = c.execute('select "categoricalness-angle" as angle, "mean[grammar]ofnodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01" and "robot-start-target" like "%page-rank%"')
-#selections = selAll = c.execute('select "categoricalness-angle" as angle, "mean[grammar]ofnodes" as mean from robot_combined')
-#selections = selHumansNear = c.execute('select "categoricalness-angle" as angle, "mean[grammar]ofnodes" as mean from human_combined where "bias-target" like "%near%"');
+#selections = selRobots = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01"')
+#selections = selRobotsBetween = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01" and "robot-start-target" like "%page-rank%"')
+#selections = selAll = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined')
+selections = selHumansNear = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from human_combined where "bias-target" like "%near%"');
 
 for row in selections:
 	#print row[1], np.float64(row[1])
