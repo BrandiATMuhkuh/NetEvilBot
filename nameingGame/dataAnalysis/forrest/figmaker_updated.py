@@ -217,19 +217,31 @@ def linearRegressionR2Val(xs,ys):
 	return (corrcoef(xs,ys)[0,1])**2
 
 def makeDriftPlot():
+	degreeStart=2
+	phiStart=45.0
 	targets = ["random","nearby","influentials"]
 	dats = [csv2rec("LC_target_%s_hires.stripped.csv"%target) for target in targets]
-	datSubsets = [dat[dat['phi']==45.0] for dat in dats]
+	datSubsets = [dat[dat['phi']==phiStart] for dat in dats]
+
 	dat45 = concatenate(datSubsets)
-	print "Number of runs averaged for each degree = %s"%len(dat45[dat45['degree']==2]) 
+	#User lowerst degree
+	degreeStart = sort(dat45['degree'])[0]
+	print "print degree: %s"%sort(dat45['degree'])[0]
+	print dat45['degree']==degreeStart
+	
+	print "Number of runs averaged for each degree = %s"%len(dat45[dat45['degree']==degreeStart]) 
 	figure(figsize=(3.27,2.4))
 	subplots_adjust(left=.18, bottom=.18, top=0.94, right=0.94)
-	for threshold,tlabel,col,marker,ms in [(0.0001,"survival","blue","^",6),(0.5,"dominance","green","o",4),(0.9999,"completion","red","v",6)]:
+	# WITH finished things
+	#for threshold,tlabel,col,marker,ms in [(0.0001,"survival","blue","^",6),(0.5,"dominance","green","o",4),(0.9999,"completion","red","v",6)]:
+	for threshold,tlabel,col,marker,ms in [(0.0001,"survival","blue","^",6),(0.5,"dominance","green","o",4),(0.9,"completion","red","v",6)]:
 		datThresh = dat45[dat45['mean_grammar']>=threshold]
 		b=float64(bincount(datThresh['degree']))
 		xs = float64(array(range(len(b))[2:]))
-		ys = b[2:] / float(len(dat45[dat45['degree']==2]))
+		ys = b[2:] / float(len(dat45[dat45['degree']==degreeStart]))
 		plot(xs,ys,label=tlabel, color=col, marker=marker,ms=ms*.5,linestyle='None')
+		#show()
+		print "juhu"
 		a, b = polyfit(xs,ys,1)
 		yRegress = polyval([a,b],xs)
 		plot(xs[[0,-1]],yRegress[[0,-1]],':',color=col,marker='None')
@@ -377,5 +389,5 @@ def colormapTest():
 
 
 ##works
-#makeDriftPlot()
+makeDriftPlot()
 #makeSubplotFigures3()

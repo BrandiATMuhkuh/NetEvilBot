@@ -4,8 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import sqlite3
 
-xedges = []
-yedges = []
+
 
 
 
@@ -13,77 +12,90 @@ yedges = []
 conn = sqlite3.connect('output/combined.sqlite')
 c = conn.cursor()
 
-#selections = selRobots = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01"')
-#selections = selRobotsBetween = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01" and "robot-start-target" like "%page-rank%"')
-#selections = selAll = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined')
-selections = selHumansNear = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from human_combined where "bias-target" like "%near%"');
 
-for row in selections:
-	#print row[1], np.float64(row[1])
-	yedges.append(float(row[0]))
-	xedges.append(float(row[1]))
+def hist_old2d():
+	xedges = []
+	yedges = []
 
+	#selections = selRobots = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01"')
+	#selections = selRobotsBetween = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined where "bias-target" like "%influentials%" and "robot-learning-rate" = "0.01" and "robot-start-target" like "%page-rank%"')
+	selections = selAll = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from robot_combined')
+	#selections = selHumansNear = c.execute('select "categoricalness-angle" as angle, "mean [grammar] of nodes" as mean from human_combined where "bias-target" like "%near%"');
 
-
-
-# x = np.random.normal(3, 1, 100)
-# y = np.random.normal(1, 1, 100)
-# H, xedges, yedges = np.histogram2d(yedges, xedges, bins=[len(yedges), len(xedges)])
-# #H = np.ones((4, 4)).cumsum().reshape(4, 4)
-# #print H
-# plt.imshow(H, interpolation='nearest', origin='low', extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]])
-
-
-# H = np.ones((4, 4)).cumsum().reshape(4, 4)
-# #print(H[::-1]) 
-
-
-# fig = plt.figure(figsize=(7, 3))
-# ax = fig.add_subplot(131)
-# ax.set_title('imshow: equidistant')
-# im = plt.imshow(H, interpolation='nearest', origin='low',
-#                 extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]])
- 
-# xcenters = xedges[:-1] + 0.5 * (xedges[1:] - xedges[:-1])
-# ycenters = yedges[:-1] + 0.5 * (yedges[1:] - yedges[:-1])
-# im.set_data(xcenters, ycenters, H)
-# ax.images.append(im)
-# ax.set_xlim(xedges[0], xedges[-1])
-# ax.set_ylim(yedges[0], yedges[-1])
-# ax.set_aspect('equal')
-
-#plt.show()
-
-
-
-x = xedges
-y = yedges
-
-gridx = np.linspace(min(x),max(x),11)
-gridy = np.linspace(min(y),max(y),11)
-
-H, xedges, yedges = np.histogram2d(x, y, bins=[gridx, gridy])
-
-# plt.figure()
-# plt.plot(x, y, 'ro')
-# plt.grid(True)
-
-# plt.figure()
-# myextent  =[xedges[0],xedges[-1],yedges[0],yedges[-1]]
-# plt.imshow(H.T,origin='low',extent=myextent,interpolation='nearest',aspect='auto')
-# plt.plot(x,y,'ro')
-# plt.colorbar()
-
-
-plt.hexbin(x, y)
-plt.show()
-
-#plt.hexbin(xedges, yedges)
-#plt.show()
+	for row in selections:
+		#print row[1], np.float64(row[1])
+		yedges.append(float(row[0]))
+		xedges.append(float(row[1]))
 
 
 
 
+	x = xedges
+	y = yedges
+
+	gridx = np.linspace(min(x),max(x),11)
+	gridy = np.linspace(min(y),max(y),11)
+
+	H, xedges, yedges = np.histogram2d(x, y, bins=[gridx, gridy])
 
 
+	plt.hexbin(x, y)
+	plt.show()
 
+	#plt.hexbin(xedges, yedges)
+	#plt.show()
+
+
+def hist1d():
+	print "hist 1d"
+
+	query = """select "mean [grammar] of nodes" as mean_grammar  from robot_combined where 
+	"categoricalness-angle" == 60 
+	and "robot-learning-rate" <= 0.05
+	and "bias-target" like "%none%"
+	"""
+	histList = []
+
+	for row in c.execute(query):
+		histList.append(float(row[0]))
+
+
+	hist, bin_edges = np.histogram(histList, bins='sqrt')
+	plt.hist(histList, bins='sqrt')
+	plt.show()
+
+
+def hist2d(learning):
+	print "hist 2d"
+	query = """select 
+	"mean [grammar] of nodes" as mean_grammar,
+	"categoricalness-angle" 
+	from robot_combined where 
+	"robot-learning-rate" <= """ +str(learning)+ """ 
+	and "robot-start-target" like "%page-rank%"
+	and "bias-target" like "%none%"
+	"""
+	x_histList = []
+	y_histList = []
+
+	for row in c.execute(query):
+		x_histList.append(float(row[0]))
+		y_histList.append(int(row[1]))
+
+	plt.hist2d(x_histList, y_histList, bins=[100,45])
+	plt.title("Histogram with robot learning rate <= "+str(learning))
+	plt.savefig('figs/hist_Lower_learn'+str(learning)+'.png')
+	#plt.show()
+
+def testme():
+	print "testme"
+	r = np.random.randn(100,3)
+	H, edges = np.histogramdd(r, bins = (5, 8, 4))
+	print r
+
+
+#testme()
+#hist1d()
+#hist2d(0.01)
+#hist2d(0.05)
+hist2d(0.1)
