@@ -23,4 +23,7 @@ sqlite3 "output/combined.sqlite" <<!
 .mode csv
 .import output/human_combined.csv human_combined
 .import output/robot_combined.csv robot_combined
+CREATE INDEX robotq1 ON robot_combined("robot-start-target", "bias-target", "num-of-robots");
+CREATE INDEX robotq2 ON robot_combined("robot-learning-rate", "robot-start-target", "bias-target", "num-of-robots");
+CREATE INDEX robotq3 ON robot_combined("categoricalness-angle", "robot-learning-rate", "robot-start-target", "bias-target", "num-of-robots");
 !

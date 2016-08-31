@@ -53,6 +53,8 @@ def make2DHistogram(dat,datSubset,interpolation='nearest',contourLines=0,cmap=cm
 	X = dat['degree']
 	Y = dat['phi']
 
+	print datSubset['degree'],datSubset['phi']
+	return
 	xi = float64(array(sorted(set(X))))
 	yi = float64(array(sorted(set(Y))))
 	#print xi,yi
@@ -187,6 +189,7 @@ def makeSubplotFigures3():
 			ax = subplot(3,3,figrow*3 + i+1)
 			datSubset = dats[target][dats[target]['mean_grammar']>=threshold]
 			make2DHistogram(dats[target],datSubset,interpolation='nearest',contourLines=0,showColorBar=((i==2) and (figrow==1)),cmap=modifiedJet,label_font_size=16)
+			break
 			if (i>0):
 				ax.yaxis.set_ticklabels([])
 				ax.yaxis.label.set_text("")
@@ -389,5 +392,5 @@ def colormapTest():
 
 
 ##works
-makeDriftPlot()
-#makeSubplotFigures3()
+#makeDriftPlot()
+makeSubplotFigures3()
