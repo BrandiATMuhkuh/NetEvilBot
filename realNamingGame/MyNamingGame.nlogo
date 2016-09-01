@@ -1,9 +1,11 @@
+extensions [ palette nw ]
+
+
 to setup
   clear-all
   ask patches [ set pcolor white ]
   set-default-shape turtles "circle"
   createNetwork
-  ask turtles [ set color black ]
   ask links [ set color black ]
 
   reset-ticks
@@ -22,17 +24,19 @@ to move-turtles
 end
 
 to createNetwork
-  create-turtles 6 [ create-links-with other turtles ]
+  nw:generate-preferential-attachment turtles links Humans? [
+    set color black
+  ]
 
+  ;create-turtles Humans? [
+  ;  create-links-with other turtles
+  ;  set color black
+  ;]
 
-  with-local-randomness [ repeat 100 [ do-network-layout turtles  ]]
+  ;layout-circle turtles 10
+  layout-radial turtles links (turtle 0)
 end
 
-to do-network-layout [ thenodes ]
-   with-local-randomness [
-     layout-spring thenodes links 0.3 1 * (world-width / (sqrt 5)) 0.9
-   ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -111,6 +115,21 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+18
+128
+190
+161
+Humans?
+Humans?
+2
+100
+17
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
