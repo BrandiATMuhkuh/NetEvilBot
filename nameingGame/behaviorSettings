@@ -1,0 +1,131 @@
+LC_karate_humans_random
+["bias-target" "none"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 1]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "flat" "uniform-symmetric" "normal-symmetric"]
+["visuals?" false]
+["start-target-rank" [0 1 33]]
+["start-target" "influentials"]
+
+LC_karate_humans_nearby
+["bias-target" "nearby"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 1]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "flat" "uniform-symmetric" "normal-symmetric"]
+["visuals?" false]
+["start-target-rank" [0 1 33]]
+["start-target" "influentials"]
+
+LC_karate_humans_influentials
+["bias-target" "influentials"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 1]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "flat" "uniform-symmetric" "normal-symmetric"]
+["visuals?" false]
+["start-target-rank" [0 1 33]]
+["start-target" "influentials"]
+
+
+
+
+
+LC_karate_robot_random_be_ra
+["bias-target" "none"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 0]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "uniform-symmetric"]
+["visuals?" false]
+["num-of-robots" [1 1 33]]
+["robot-learning-rate" [0 0.01 0.1]]
+["robot-start-target" "random" "betweenness-centrality"]
+
+LC_karate_robot_random_pr_cl
+["bias-target" "none"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 0]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "uniform-symmetric"]
+["visuals?" false]
+["num-of-robots" [1 1 33]]
+["robot-learning-rate" [0 0.01 0.1]]
+["robot-start-target" "closeness-centrality" "page-rank"]
+
+
+LC_karate_robot_nearby_be_ra
+["bias-target" "nearby"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 0]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "uniform-symmetric"]
+["visuals?" false]
+["num-of-robots" [1 1 33]]
+["robot-learning-rate" [0 0.01 0.1]]
+["robot-start-target" "random" "betweenness-centrality"]
+
+LC_karate_robot_nearby_pr_cl
+["bias-target" "nearby"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 0]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "uniform-symmetric"]
+["visuals?" false]
+["num-of-robots" [1 1 33]]
+["robot-learning-rate" [0 0.01 0.1]]
+["robot-start-target" "closeness-centrality" "page-rank"]
+
+LC_karate_robot_influentials_be_ra
+["bias-target" "influentials"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 0]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "uniform-symmetric"]
+["visuals?" false]
+["num-of-robots" [1 1 33]]
+["robot-learning-rate" [0 0.01 0.1]]
+["robot-start-target" "random" "betweenness-centrality"]
+
+LC_karate_robot_influentials_pr_cl
+["bias-target" "influentials"]
+["categoricalness-angle" [45 1 90]]
+["num-start-with-G1" 0]
+["network-type" "from-file"]
+["network-filename" "AdHealthForNetLogo/karate.txt"]
+["learning-rate" 0.1]
+["global-bias" 0]
+["bias-dist" "uniform-symmetric"]
+["visuals?" false]
+["num-of-robots" [1 1 33]]
+["robot-learning-rate" [0 0.01 0.1]]
+["robot-start-target" "closeness-centrality" "page-rank"]
+
+
+
+

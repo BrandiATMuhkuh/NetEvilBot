@@ -1,0 +1,6 @@
+gnome-terminal -e "ssh jbrandsetter@mace.phon.ox.ac.uk"
+gnome-terminal -e "ssh jbrandsetter@bay.phon.ox.ac.uk"
+gnome-terminal -e "ssh jbrandsetter@saffron.phon.ox.ac.uk"
+gnome-terminal -e "ssh jbrandsetter@cumin.phon.ox.ac.uk"
+gnome-terminal -e "ssh jbrandsetter@wasabi.phon.ox.ac.uk"
+gnome-terminal -e "ssh jbrandsetter@clove.phon.ox.ac.uk"
