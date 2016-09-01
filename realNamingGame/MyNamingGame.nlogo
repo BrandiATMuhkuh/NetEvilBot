@@ -1,5 +1,10 @@
 extensions [ palette nw ]
 
+turtles-own [
+  dictionary
+  is-robot ;define if node is robot or not
+  robot-connection;
+]
 
 to setup
   clear-all
@@ -26,6 +31,8 @@ end
 to createNetwork
   nw:generate-preferential-attachment turtles links Humans? [
     set color black
+    set is-robot false
+    set robot-connection 0
   ]
 
   ;create-turtles Humans? [
@@ -33,10 +40,58 @@ to createNetwork
   ;  set color black
   ;]
 
+  layout
+end
+
+to layout
   ;layout-circle turtles 10
   layout-radial turtles links (turtle 0)
 end
 
+to add-robots
+  robot-setup-nodes Robots?
+  robot-add-nodes Robots?
+end
+
+to robot-setup-nodes [ num-robots ]
+  set-default-shape turtles "square"
+  create-turtles num-robots
+  [
+    ; for visual reasons, we don't put any nodes *too* close to the edges
+    setxy random-xcor * .95 random-ycor * .95
+    set size 1
+    set color green
+    set is-robot true;define if node is robot or not
+  ]
+end
+
+to robot-add-nodes [ num-robots]
+
+  ;show [who] of nodes with [is-robot = false] ;all not robot nodes
+  ;if (robot-start-target = "random")
+  if (true)
+  [
+      ;this will connect all robot nodes with a random not robot node that has no robot
+    ask turtles with [is-robot = false]
+    [
+      ;let human myself
+      let thiswho who
+
+      if (one-of turtles with [is-robot = true and robot-connection = 0] != nobody)[
+        ask one-of turtles with [is-robot = true and robot-connection = 0]
+        [
+          create-link-with myself
+          set robot-connection 1
+
+          ask turtle thiswho [
+            set robot-connection 1
+            ]
+          ]
+        ]
+      ]
+    ]
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -130,6 +185,55 @@ Humans?
 1
 NIL
 HORIZONTAL
+
+BUTTON
+105
+81
+180
+114
+NIL
+layout
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+24
+304
+196
+337
+Robots?
+Robots?
+0
+10
+1
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+25
+262
+139
+295
+NIL
+add-robots
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
