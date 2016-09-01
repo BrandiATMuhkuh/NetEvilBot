@@ -6,10 +6,15 @@ turtles-own [
   robot-connection;
 ]
 
+globals [
+  dicSet
+]
+
 
 
 to setup
   clear-all
+  set dicSet [16 26 36 46 56 66 76 86 96 106 116 126]
   ask patches [ set pcolor white ]
   set-default-shape turtles "circle"
   createNetwork
@@ -19,11 +24,61 @@ to setup
 end
 
 to go
+  talk
   color-turtles
   ;move-turtles
   tick
 end
 
+to talk
+  ask one-of links [
+    let r random 2; random 0 or 1
+    let talker end1
+    let receiver end2
+    if r > 0 [
+      set talker end2
+      set receiver end1
+    ]
+
+    ;add word to dictionary if emtpy
+    ask talker[
+      show dictionary
+      if empty? dictionary[;if talkers dictionary is empty we need to add an element
+         set dictionary lput (item 0 (shuffle dicSet)) dictionary
+      ]
+    ]
+
+    let sayWord 0
+
+    ask talker[
+        set sayWord item 0 (shuffle dictionary)
+    ]
+
+
+    ;talk to each other
+    ask receiver[
+      show dictionary
+      ifelse member? sayWord dictionary or empty? dictionary[;success
+        ;Listerner empties dictionary and adds the success word
+        set dictionary []
+        set dictionary lput sayWord dictionary
+
+        ;ask talker to do as listener
+        ask talker[
+          ;Talker empties dictionary and adds the success word
+          set dictionary []
+          set dictionary lput sayWord dictionary
+        ]
+
+      ][;fail
+         set dictionary lput sayWord dictionary
+      ]
+    ]
+
+
+
+  ]
+end
 
 to color-turtles
   ask turtles with [is-robot = false][
@@ -201,7 +256,7 @@ Humans?
 Humans?
 2
 100
-17
+30
 1
 1
 NIL
@@ -233,7 +288,7 @@ Robots?
 Robots?
 0
 10
-2
+4
 1
 1
 NIL
