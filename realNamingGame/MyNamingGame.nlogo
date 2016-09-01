@@ -6,6 +6,8 @@ turtles-own [
   robot-connection;
 ]
 
+
+
 to setup
   clear-all
   ask patches [ set pcolor white ]
@@ -17,9 +19,26 @@ to setup
 end
 
 to go
-  move-turtles
+  color-turtles
+  ;move-turtles
   tick
 end
+
+
+to color-turtles
+  ask turtles with [is-robot = false][
+    ifelse (length dictionary = 1)[
+      set color first dictionary
+    ][
+       ifelse (empty? dictionary)[
+          set color black
+       ][
+          set color gray
+       ]
+    ]
+  ]
+end
+
 
 to move-turtles
   ask turtles [
@@ -33,6 +52,7 @@ to createNetwork
     set color black
     set is-robot false
     set robot-connection 0
+    set dictionary []
   ]
 
   ;create-turtles Humans? [
@@ -60,8 +80,9 @@ to robot-setup-nodes [ num-robots ]
     ; for visual reasons, we don't put any nodes *too* close to the edges
     setxy random-xcor * .95 random-ycor * .95
     set size 1
-    set color green
+    set color 136
     set is-robot true;define if node is robot or not
+    set dictionary [136]
   ]
 end
 
@@ -212,7 +233,7 @@ Robots?
 Robots?
 0
 10
-1
+2
 1
 1
 NIL
