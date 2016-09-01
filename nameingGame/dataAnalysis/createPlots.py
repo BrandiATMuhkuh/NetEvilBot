@@ -120,7 +120,7 @@ def hist2d(robot = True, learning=0.05, learningExact=False, startTarget = "page
 
 	gridx = np.linspace(min(x_histList),max(x_histList),100)
 	gridy = np.linspace(min(y_histList),max(y_histList),47)
-	bins=[gridx, gridy]
+	#bins=[gridx, gridy]
 	#print bins
 	#H, xedges, yedges = np.histogram2d(x, y, bins=[gridx, gridy])
 
@@ -214,9 +214,9 @@ def runAllRobotStats():
 	print "run all stats"
 	biasTargets = ["none", "nearby", "influentials"]
 	startTargets = ["random", "betweenness-centrality", "closeness-centrality", "page-rank"]
-	learnings = [0.05]
-	learningExacts = [True]
-	robotExact = [False]
+	learnings = [0.01, 0.05, 0.1]
+	learningExacts = [False, True]
+	robotExact = [False, True]
 	robotNumbers = [2,15,29]
 
 	imageCount = 0;
@@ -237,8 +237,8 @@ def runAllLearnStats():
 			hist2d_learn(robot = True, learning=0.1, learningExact=False, startTarget = start, biasTarget = "none", robotNumbers = robots, robotExact = False)
 
 
-runAllLearnStats()
-#runAllRobotStats()
+#runAllLearnStats()
+runAllRobotStats()
 #hist2d_hexbin(robot = True, learning=0.1, learningExact=True, startTarget = "page-rank", biasTarget = "nearby", robotNumbers = 33, robotExact = False)
 
 #testme()
