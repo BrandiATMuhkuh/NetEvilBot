@@ -43,6 +43,7 @@ to talk
     ;add word to dictionary if emtpy
     ask talker[
       show dictionary
+      show is-robot
       if empty? dictionary[;if talkers dictionary is empty we need to add an element
          set dictionary lput (item 0 (shuffle dicSet)) dictionary
       ]
@@ -60,19 +61,29 @@ to talk
       show dictionary
       ifelse member? sayWord dictionary or empty? dictionary[;success
         ;Listerner empties dictionary and adds the success word
-        set dictionary []
-        set dictionary lput sayWord dictionary
+        if is-robot = false[
+           set dictionary []
+           set dictionary lput sayWord dictionary
+        ]
 
         ;ask talker to do as listener
         ask talker[
-          ;Talker empties dictionary and adds the success word
-          set dictionary []
-          set dictionary lput sayWord dictionary
+           ;Talker empties dictionary and adds the success word
+           if is-robot = false[
+              set dictionary []
+              set dictionary lput sayWord dictionary
+              show dictionary
+           ]
         ]
 
       ][;fail
-         set dictionary lput sayWord dictionary
+         if is-robot = false[
+           set dictionary lput sayWord dictionary
+         ]
+
       ]
+
+      show dictionary
     ]
 
 
@@ -256,7 +267,7 @@ Humans?
 Humans?
 2
 100
-30
+2
 1
 1
 NIL
@@ -288,7 +299,7 @@ Robots?
 Robots?
 0
 10
-4
+2
 1
 1
 NIL
