@@ -177,7 +177,20 @@ to create-add-robot [ num-robots ]
   ]
 
   ;between-centrality
-  ;set nodesort sort-on [1 - nw:betweenness-centrality] humans with [is-robot = false]
+  if (centrality = "betweenness-centrality") [
+    set nodesort sort-on [1 - nw:betweenness-centrality] humans with [is-robot = false]
+  ]
+
+  ;page-rank
+  if (centrality = "page-rank") [
+    set nodesort sort-on [1 - nw:page-rank] humans with [is-robot = false]
+  ]
+
+  ;closeness-centrality
+  if (centrality = "closeness-centrality") [
+    set nodesort sort-on [1 - nw:closeness-centrality] humans with [is-robot = false]
+  ]
+
 
   let robotCount 0
   ask humans with [is-robot = true and robot-connection = 0][
@@ -515,6 +528,16 @@ true
 PENS
 "Human" 1.0 0 -13840069 true "" "plot humanTalkCount"
 "Robot" 1.0 0 -13345367 true "" "plot robotTalkCount"
+
+CHOOSER
+16
+291
+189
+336
+centrality
+centrality
+"random" "betweenness-centrality" "page-rank" "closeness-centrality"
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
