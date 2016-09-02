@@ -9,6 +9,8 @@ turtles-own [
 globals [
   dicSet
   fullDicts
+  humanTalkCount
+  robotTalkCount
 ]
 
 
@@ -22,6 +24,9 @@ to setup
   createNetwork
   ask links [ set color black ]
 
+  set humanTalkCount 0
+  set robotTalkCount 0
+
   reset-ticks
 end
 
@@ -29,7 +34,6 @@ to go
   talk
   color-turtles
   updateFullDicts
-  ;move-turtles
   tick
 end
 
@@ -41,19 +45,22 @@ to updateFullDicts
 end
 
 to talk
-  ask one-of links [
+  ask one-of turtles [
     let r random 2; random 0 or 1
-    let talker end1
-    let receiver end2
-    if r > 0 [
-      set talker end2
-      set receiver end1
-    ]
+    let talker self
+    let receiver one-of link-neighbors
 
     ;add word to dictionary if emtpy
     ask talker[
       ;show dictionary
-      ;show is-robot
+      show is-robot
+      ifelse is-robot = true[
+         set robotTalkCount robotTalkCount + 1
+      ][
+         set humanTalkCount humanTalkCount + 1
+      ]
+
+
       if empty? dictionary[;if talkers dictionary is empty we need to add an element
          set dictionary lput (item 0 (shuffle dicSet)) dictionary
       ]
@@ -116,13 +123,6 @@ to color-turtles
 end
 
 
-to move-turtles
-  ask turtles [
-    right random 360
-    forward 1
-  ]
-end
-
 to createNetwork
   nw:generate-preferential-attachment turtles links Humans? [
     set color black
@@ -171,10 +171,86 @@ to create-add-robot [ num-robots ]
   ask turtles with [is-robot = true and robot-connection = 0][
 
      ;Connect to random node
-     create-link-from one-of turtles with [is-robot = false]
+     create-link-with one-of turtles with [is-robot = false]
   ]
 
 end
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;; OLD ;;;;;;;;;;;;;;;;;
+to talk-via-links
+  ask one-of links [
+    let r random 2; random 0 or 1
+    let talker end1
+    let receiver end2
+    if r > 0 [
+      set talker end2
+      set receiver end1
+    ]
+
+    ;add word to dictionary if emtpy
+    ask talker[
+      ;show dictionary
+      show is-robot
+      ifelse is-robot = true[
+         set robotTalkCount robotTalkCount + 1
+      ][
+         set humanTalkCount humanTalkCount + 1
+      ]
+
+
+      if empty? dictionary[;if talkers dictionary is empty we need to add an element
+         set dictionary lput (item 0 (shuffle dicSet)) dictionary
+      ]
+    ]
+
+    let sayWord 0
+
+    ask talker[
+        set sayWord item 0 (shuffle dictionary)
+    ]
+
+
+    ;talk to each other
+    ask receiver[
+      ;show dictionary
+      ifelse member? sayWord dictionary or empty? dictionary[;success
+        ;Listerner empties dictionary and adds the success word
+        if is-robot = false[
+           set dictionary []
+           set dictionary lput sayWord dictionary
+        ]
+
+        ;ask talker to do as listener
+        ask talker[
+           ;Talker empties dictionary and adds the success word
+           if is-robot = false[
+              set dictionary []
+              set dictionary lput sayWord dictionary
+              ;show dictionary
+           ]
+        ]
+
+      ][;fail
+         if is-robot = false[
+           set dictionary lput sayWord dictionary
+         ]
+
+      ]
+
+      ;show dictionary
+    ]
+
+
+
+  ]
+end
+
+
 
 to robot-setup-nodes [ num-robots ]
   set-default-shape turtles "square"
@@ -336,7 +412,7 @@ Robots?
 Robots?
 0
 10
-10
+4
 1
 1
 NIL
@@ -412,6 +488,25 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+684
+362
+884
+512
+Randomness
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"Human" 1.0 0 -13840069 true "" "plot humanTalkCount"
+"Robot" 1.0 0 -13345367 true "" "plot robotTalkCount"
 
 @#$#@#$#@
 ## WHAT IS IT?
