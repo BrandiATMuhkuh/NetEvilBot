@@ -1,6 +1,8 @@
 extensions [ palette nw ]
+breed [ humans human ]
+undirected-link-breed [ friendships friendship ]
 
-turtles-own [
+humans-own [
   dictionary
   is-robot ;define if node is robot or not
   robot-connection;
@@ -20,9 +22,9 @@ to setup
   set fullDicts []
   set dicSet [16 26 36 46 56 66 76 86 96 106 116 126]
   ask patches [ set pcolor white ]
-  set-default-shape turtles "circle"
+  set-default-shape humans "circle"
   createNetwork
-  ask links [ set color black ]
+  ask friendships [ set color black ]
 
   set humanTalkCount 0
   set robotTalkCount 0
@@ -32,23 +34,23 @@ end
 
 to go
   talk
-  color-turtles
+  color-humans
   updateFullDicts
   tick
 end
 
 to updateFullDicts
   set fullDicts []
-  ask turtles[
+  ask humans[
     foreach dictionary [ set fullDicts lput ? fullDicts ]
   ]
 end
 
 to talk
-  ask one-of turtles [
+  ask one-of humans [
     let r random 2; random 0 or 1
     let talker self
-    let receiver one-of link-neighbors
+    let receiver one-of friendship-neighbors
 
     ;add word to dictionary if emtpy
     ask talker[
@@ -108,8 +110,8 @@ to talk
   ]
 end
 
-to color-turtles
-  ask turtles with [is-robot = false][
+to color-humans
+  ask humans with [is-robot = false][
     ifelse (length dictionary = 1)[
       set color first dictionary
     ][
@@ -124,7 +126,16 @@ end
 
 
 to createNetwork
-  nw:generate-preferential-attachment turtles links Humans? [
+;  nw:generate-preferential-attachment turtles links Humans? [
+;    set color black
+;    set is-robot false
+;    set robot-connection 0
+;    set dictionary []
+;  ]
+;
+
+
+  nw:load-gml "AdHealthForNetLogo/karate.gml" humans friendships [
     set color black
     set is-robot false
     set robot-connection 0
@@ -132,20 +143,23 @@ to createNetwork
   ]
 
 
+  ;change directional links do undirected links
+  ask friendships[
+     show end1
+     show end2
+     let receiver end2
+     ask end1[
+        ;create-link-with receiver
+     ]
 
-;  nw:load-gml "AdHealthForNetLogo/karate.gml" turtles links [
-;    set color black
-;    set is-robot false
-;    set robot-connection 0
-;    set dictionary []
-;  ]
+  ]
 
   layout
 end
 
 to layout
   ;layout-circle turtles 10
-  layout-radial turtles links (turtle 0)
+  layout-radial humans friendships (human 0)
 end
 
 to add-robots
@@ -156,8 +170,8 @@ end
 
 
 to create-add-robot [ num-robots ]
-  set-default-shape turtles "square"
-  create-turtles num-robots
+  set-default-shape humans "square"
+  create-humans num-robots
   [
     ; for visual reasons, we don't put any nodes *too* close to the edges
     setxy random-xcor * .95 random-ycor * .95
@@ -168,10 +182,10 @@ to create-add-robot [ num-robots ]
     set robot-connection 0
   ]
 
-  ask turtles with [is-robot = true and robot-connection = 0][
+  ask humans with [is-robot = true and robot-connection = 0][
 
      ;Connect to random node
-     create-link-with one-of turtles with [is-robot = false]
+     create-friendship-with one-of humans with [is-robot = false]
   ]
 
 end
@@ -182,8 +196,8 @@ end
 
 
 ;;;;;;;;;;;;;;;;;;; OLD ;;;;;;;;;;;;;;;;;
-to talk-via-links
-  ask one-of links [
+to talk-via-friendships
+  ask one-of friendships [
     let r random 2; random 0 or 1
     let talker end1
     let receiver end2
@@ -253,8 +267,8 @@ end
 
 
 to robot-setup-nodes [ num-robots ]
-  set-default-shape turtles "square"
-  create-turtles num-robots
+  set-default-shape humans "square"
+  create-humans num-robots
   [
     ; for visual reasons, we don't put any nodes *too* close to the edges
     setxy random-xcor * .95 random-ycor * .95
@@ -272,18 +286,18 @@ to robot-add-nodes [ num-robots]
   if (true)
   [
       ;this will connect all robot nodes with a random not robot node that has no robot
-    ask turtles with [is-robot = false]
+    ask humans with [is-robot = false]
     [
       ;let human myself
       let thiswho who
 
-      if (one-of turtles with [is-robot = true and robot-connection = 0] != nobody)[
-        ask one-of turtles with [is-robot = true and robot-connection = 0]
+      if (one-of humans with [is-robot = true and robot-connection = 0] != nobody)[
+        ask one-of humans with [is-robot = true and robot-connection = 0]
         [
           create-link-from myself
           set robot-connection 1
 
-          ask turtle thiswho [
+          ask human thiswho [
             set robot-connection 1
             ]
           ]
@@ -412,7 +426,7 @@ Robots?
 Robots?
 0
 10
-4
+10
 1
 1
 NIL
