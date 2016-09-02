@@ -24,7 +24,7 @@ to setup
   ask patches [ set pcolor white ]
   set-default-shape humans "circle"
   createNetwork
-  ask friendships [ set color black ]
+  ask friendships [ set color gray ]
 
   set humanTalkCount 0
   set robotTalkCount 0
@@ -54,8 +54,8 @@ to talk
 
     ;add word to dictionary if emtpy
     ask talker[
-      ;show dictionary
-      show is-robot
+
+
       ifelse is-robot = true[
          set robotTalkCount robotTalkCount + 1
       ][
@@ -77,7 +77,7 @@ to talk
 
     ;talk to each other
     ask receiver[
-      ;show dictionary
+
       ifelse member? sayWord dictionary or empty? dictionary[;success
         ;Listerner empties dictionary and adds the success word
         if is-robot = false[
@@ -91,7 +91,7 @@ to talk
            if is-robot = false[
               set dictionary []
               set dictionary lput sayWord dictionary
-              ;show dictionary
+
            ]
         ]
 
@@ -102,7 +102,7 @@ to talk
 
       ]
 
-      ;show dictionary
+
     ]
 
 
@@ -141,20 +141,6 @@ to createNetwork
     set robot-connection 0
     set dictionary []
   ]
-
-
-  ;change directional links do undirected links
-  ask friendships[
-     show end1
-     show end2
-     let receiver end2
-     ask end1[
-        ;create-link-with receiver
-     ]
-
-  ]
-
-  layout
 end
 
 to layout
@@ -208,8 +194,6 @@ to talk-via-friendships
 
     ;add word to dictionary if emtpy
     ask talker[
-      ;show dictionary
-      show is-robot
       ifelse is-robot = true[
          set robotTalkCount robotTalkCount + 1
       ][
@@ -231,7 +215,6 @@ to talk-via-friendships
 
     ;talk to each other
     ask receiver[
-      ;show dictionary
       ifelse member? sayWord dictionary or empty? dictionary[;success
         ;Listerner empties dictionary and adds the success word
         if is-robot = false[
@@ -245,7 +228,6 @@ to talk-via-friendships
            if is-robot = false[
               set dictionary []
               set dictionary lput sayWord dictionary
-              ;show dictionary
            ]
         ]
 
@@ -256,7 +238,6 @@ to talk-via-friendships
 
       ]
 
-      ;show dictionary
     ]
 
 
@@ -281,7 +262,7 @@ end
 
 to robot-add-nodes [ num-robots]
 
-  ;show [who] of nodes with [is-robot = false] ;all not robot nodes
+
   ;if (robot-start-target = "random")
   if (true)
   [
@@ -354,10 +335,10 @@ NIL
 BUTTON
 21
 63
-94
+93
 96
-NIL
 setup
+setup\nlayout
 NIL
 1
 T
@@ -426,7 +407,7 @@ Robots?
 Robots?
 0
 10
-10
+1
 1
 1
 NIL
