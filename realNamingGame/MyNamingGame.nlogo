@@ -8,12 +8,14 @@ turtles-own [
 
 globals [
   dicSet
+  fullDicts
 ]
 
 
 
 to setup
   clear-all
+  set fullDicts []
   set dicSet [16 26 36 46 56 66 76 86 96 106 116 126]
   ask patches [ set pcolor white ]
   set-default-shape turtles "circle"
@@ -26,8 +28,16 @@ end
 to go
   talk
   color-turtles
+  updateFullDicts
   ;move-turtles
   tick
+end
+
+to updateFullDicts
+  set fullDicts []
+  ask turtles[
+    foreach dictionary [ set fullDicts lput ? fullDicts ]
+  ]
 end
 
 to talk
@@ -42,8 +52,8 @@ to talk
 
     ;add word to dictionary if emtpy
     ask talker[
-      show dictionary
-      show is-robot
+      ;show dictionary
+      ;show is-robot
       if empty? dictionary[;if talkers dictionary is empty we need to add an element
          set dictionary lput (item 0 (shuffle dicSet)) dictionary
       ]
@@ -58,7 +68,7 @@ to talk
 
     ;talk to each other
     ask receiver[
-      show dictionary
+      ;show dictionary
       ifelse member? sayWord dictionary or empty? dictionary[;success
         ;Listerner empties dictionary and adds the success word
         if is-robot = false[
@@ -72,7 +82,7 @@ to talk
            if is-robot = false[
               set dictionary []
               set dictionary lput sayWord dictionary
-              show dictionary
+              ;show dictionary
            ]
         ]
 
@@ -83,7 +93,7 @@ to talk
 
       ]
 
-      show dictionary
+      ;show dictionary
     ]
 
 
@@ -121,10 +131,14 @@ to createNetwork
     set dictionary []
   ]
 
-  ;create-turtles Humans? [
-  ;  create-links-with other turtles
-  ;  set color black
-  ;]
+
+
+;  nw:load-gml "AdHealthForNetLogo/karate.gml" turtles links [
+;    set color black
+;    set is-robot false
+;    set robot-connection 0
+;    set dictionary []
+;  ]
 
   layout
 end
@@ -135,8 +149,31 @@ to layout
 end
 
 to add-robots
-  robot-setup-nodes Robots?
-  robot-add-nodes Robots?
+  create-add-robot Robots?
+;  robot-setup-nodes Robots?
+;  robot-add-nodes Robots?
+end
+
+
+to create-add-robot [ num-robots ]
+  set-default-shape turtles "square"
+  create-turtles num-robots
+  [
+    ; for visual reasons, we don't put any nodes *too* close to the edges
+    setxy random-xcor * .95 random-ycor * .95
+    set size 1
+    set color 136
+    set is-robot true;define if node is robot or not
+    set dictionary [136]
+    set robot-connection 0
+  ]
+
+  ask turtles with [is-robot = true and robot-connection = 0][
+
+     ;Connect to random node
+     create-link-from one-of turtles with [is-robot = false]
+  ]
+
 end
 
 to robot-setup-nodes [ num-robots ]
@@ -167,7 +204,7 @@ to robot-add-nodes [ num-robots]
       if (one-of turtles with [is-robot = true and robot-connection = 0] != nobody)[
         ask one-of turtles with [is-robot = true and robot-connection = 0]
         [
-          create-link-with myself
+          create-link-from myself
           set robot-connection 1
 
           ask turtle thiswho [
@@ -208,10 +245,10 @@ ticks
 30.0
 
 BUTTON
-23
-29
-86
-62
+21
+12
+84
+45
 NIL
 go
 NIL
@@ -225,10 +262,10 @@ NIL
 1
 
 BUTTON
-23
-80
+21
+63
+94
 96
-113
 NIL
 setup
 NIL
@@ -242,10 +279,10 @@ NIL
 1
 
 BUTTON
-93
-28
-156
-61
+91
+11
+154
+44
 NIL
 go
 T
@@ -259,10 +296,10 @@ NIL
 1
 
 SLIDER
-18
-128
-190
+16
 161
+188
+194
 Humans?
 Humans?
 2
@@ -274,10 +311,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-105
-81
-180
-114
+103
+64
+178
+97
 NIL
 layout
 NIL
@@ -291,27 +328,81 @@ NIL
 1
 
 SLIDER
-24
-304
-196
-337
+15
+247
+187
+280
 Robots?
 Robots?
 0
 10
-2
+10
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-25
-262
-139
-295
+16
+205
+130
+238
 NIL
 add-robots
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+PLOT
+665
+10
+865
+160
+Dict sice
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot length fullDicts"
+"pen-1" 1.0 0 -8020277 true "" "plot length [color] of turtles"
+
+PLOT
+664
+169
+864
+319
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 1 -16777216 true "" "histogram [color] of turtles"
+
+BUTTON
+20
+110
+141
+143
+Robot Setup
+setup\nadd-robots\nlayout
 NIL
 1
 T
