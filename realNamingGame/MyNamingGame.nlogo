@@ -168,10 +168,13 @@ to create-add-robot [ num-robots ]
     set robot-connection 0
   ]
 
+  let nodesort sort-on [1 - nw:betweenness-centrality] humans with [is-robot = false]
+  let robotCount 0
   ask humans with [is-robot = true and robot-connection = 0][
 
      ;Connect to random node
-     create-friendship-with one-of humans with [is-robot = false]
+     create-friendship-with item robotCount nodesort
+     set robotCount robotCount + 1
   ]
 
 end
@@ -407,7 +410,7 @@ Robots?
 Robots?
 0
 10
-1
+7
 1
 1
 NIL
