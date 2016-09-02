@@ -168,7 +168,16 @@ to create-add-robot [ num-robots ]
     set robot-connection 0
   ]
 
-  let nodesort sort-on [1 - nw:betweenness-centrality] humans with [is-robot = false]
+  let nodesort []
+
+  ;random list
+  ask n-of (count humans with [is-robot = false]) humans with [is-robot = false][
+     set nodesort lput self nodesort
+  ]
+
+  ;between-centrality
+  ;set nodesort sort-on [1 - nw:betweenness-centrality] humans with [is-robot = false]
+
   let robotCount 0
   ask humans with [is-robot = true and robot-connection = 0][
 
@@ -410,7 +419,7 @@ Robots?
 Robots?
 0
 10
-7
+1
 1
 1
 NIL
