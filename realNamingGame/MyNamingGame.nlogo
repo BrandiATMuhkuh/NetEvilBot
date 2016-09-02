@@ -15,8 +15,14 @@ globals [
   robotTalkCount
 
   stat_number_of_robot_words
+  stat_number_of_robot_words_count
   stat_different_colors_count
   stat_different_colors
+
+  stat_gen_robot_percent
+  stat_5000_first
+  stat_5000_robot_percent
+  stat_5000_remaining_colors
 ]
 
 
@@ -33,6 +39,7 @@ to setup
   set humanTalkCount 0
   set robotTalkCount 0
   set stat_number_of_robot_words 0
+  set stat_number_of_robot_words_count 0
   set stat_different_colors_count 0
   set stat_different_colors []
 
@@ -65,6 +72,7 @@ to updateFullStats
        set stat_number_of_robot_words stat_number_of_robot_words + 1
     ]
   ]
+  set stat_number_of_robot_words_count stat_number_of_robot_words
   set stat_number_of_robot_words 100 * stat_number_of_robot_words / count humans with [is-robot = false]
 
   ;;calcualte how many differnt colors are in the network
@@ -76,6 +84,14 @@ to updateFullStats
     ]
   ]
 
+  ;;;;;;;;; SAVE STATS ;;;;;;;;;
+  set stat_gen_robot_percent stat_number_of_robot_words
+
+  if (ticks < 5000)[
+    set stat_5000_robot_percent stat_number_of_robot_words
+    set stat_5000_remaining_colors length stat_different_colors
+  ]
+
 end
 
 to plotColors
@@ -85,13 +101,20 @@ to plotColors
   ;fullDicts
   ;stat_different_colors
   foreach stat_different_colors [
-    let s ?
-    let l length (filter [? = s] fullDicts)
-    let sw word "" s
-    create-temporary-plot-pen sw
-    set-plot-pen-color s
-    plot l
+    if not (? = 136)[
+      let s ?
+      let l length (filter [? = s] fullDicts)
+      let sw word "" s
+      create-temporary-plot-pen sw
+      set-plot-pen-color s
+      plot l
+    ]
+
   ]
+
+  create-temporary-plot-pen "136"
+  set-plot-pen-color 136
+  plot stat_number_of_robot_words_count
 
 end
 
@@ -250,118 +273,6 @@ to create-add-robot [ num-robots ]
   ]
 
 end
-
-
-
-
-
-
-;;;;;;;;;;;;;;;;;;; OLD ;;;;;;;;;;;;;;;;;
-to talk-via-friendships
-  ask one-of friendships [
-    let r random 2; random 0 or 1
-    let talker end1
-    let receiver end2
-    if r > 0 [
-      set talker end2
-      set receiver end1
-    ]
-
-    ;add word to dictionary if emtpy
-    ask talker[
-      ifelse is-robot = true[
-         set robotTalkCount robotTalkCount + 1
-      ][
-         set humanTalkCount humanTalkCount + 1
-      ]
-
-
-      if empty? dictionary[;if talkers dictionary is empty we need to add an element
-         set dictionary lput (item 0 (shuffle dicSet)) dictionary
-      ]
-    ]
-
-    let sayWord 0
-
-    ask talker[
-        set sayWord item 0 (shuffle dictionary)
-    ]
-
-
-    ;talk to each other
-    ask receiver[
-      ifelse member? sayWord dictionary or empty? dictionary[;success
-        ;Listerner empties dictionary and adds the success word
-        if is-robot = false[
-           set dictionary []
-           set dictionary lput sayWord dictionary
-        ]
-
-        ;ask talker to do as listener
-        ask talker[
-           ;Talker empties dictionary and adds the success word
-           if is-robot = false[
-              set dictionary []
-              set dictionary lput sayWord dictionary
-           ]
-        ]
-
-      ][;fail
-         if is-robot = false[
-           set dictionary lput sayWord dictionary
-         ]
-
-      ]
-
-    ]
-
-
-
-  ]
-end
-
-
-
-to robot-setup-nodes [ num-robots ]
-  set-default-shape humans "square"
-  create-humans num-robots
-  [
-    ; for visual reasons, we don't put any nodes *too* close to the edges
-    setxy random-xcor * .95 random-ycor * .95
-    set size 1
-    set color 136
-    set is-robot true;define if node is robot or not
-    set dictionary [136]
-  ]
-end
-
-to robot-add-nodes [ num-robots]
-
-
-  ;if (robot-start-target = "random")
-  if (true)
-  [
-      ;this will connect all robot nodes with a random not robot node that has no robot
-    ask humans with [is-robot = false]
-    [
-      ;let human myself
-      let thiswho who
-
-      if (one-of humans with [is-robot = true and robot-connection = 0] != nobody)[
-        ask one-of humans with [is-robot = true and robot-connection = 0]
-        [
-          create-link-from myself
-          set robot-connection 1
-
-          ask human thiswho [
-            set robot-connection 1
-            ]
-          ]
-        ]
-      ]
-    ]
-
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -450,7 +361,7 @@ Humans?
 Humans?
 2
 100
-2
+11
 1
 1
 NIL
@@ -481,8 +392,8 @@ SLIDER
 Robots?
 Robots?
 0
-10
-1
+33
+3
 1
 1
 NIL
@@ -567,7 +478,7 @@ CHOOSER
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
-1
+0
 
 PLOT
 665
@@ -590,8 +501,8 @@ PENS
 PLOT
 888
 10
-1088
-160
+1794
+483
 Colors
 NIL
 NIL
@@ -600,9 +511,42 @@ NIL
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
+
+MONITOR
+209
+487
+318
+532
+gen %
+stat_gen_robot_percent
+17
+1
+11
+
+MONITOR
+209
+540
+317
+585
+5000 %
+stat_5000_robot_percent
+17
+1
+11
+
+MONITOR
+344
+493
+426
+538
+remColors
+stat_5000_remaining_colors
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -952,18 +896,19 @@ NetLogo 5.3.1
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
-    <setup>setup</setup>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="false">
+    <setup>setup
+add-robots</setup>
     <go>go</go>
-    <metric>count turtles</metric>
-    <enumeratedValueSet variable="Humans?">
-      <value value="2"/>
-    </enumeratedValueSet>
+    <metric>stat_gen_robot_percent</metric>
+    <metric>stat_5000_first</metric>
+    <metric>stat_5000_robot_percent</metric>
+    <metric>stat_5000_remaining_colors</metric>
     <enumeratedValueSet variable="centrality">
-      <value value="&quot;betweenness-centrality&quot;"/>
+      <value value="&quot;random&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="Robots?">
-      <value value="10"/>
+      <value value="3"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
