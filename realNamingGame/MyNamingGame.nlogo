@@ -115,11 +115,12 @@ to color-humans
     ifelse (length dictionary = 1)[
       set color first dictionary
     ][
-       ifelse (empty? dictionary)[
-          set color black
-       ][
-          set color gray
-       ]
+       set color gray
+;       ifelse (empty? dictionary)[
+;          set color gray
+;       ][
+;          set color gray
+;       ]
     ]
   ]
 end
@@ -136,7 +137,7 @@ to createNetwork
 
 
   nw:load-gml "AdHealthForNetLogo/karate.gml" humans friendships [
-    set color black
+    set color gray
     set is-robot false
     set robot-connection 0
     set dictionary []
@@ -419,7 +420,7 @@ Robots?
 Robots?
 0
 10
-1
+4
 1
 1
 NIL
