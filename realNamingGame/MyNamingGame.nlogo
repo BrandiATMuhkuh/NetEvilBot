@@ -13,6 +13,10 @@ globals [
   fullDicts
   humanTalkCount
   robotTalkCount
+
+  stat_number_of_robot_words
+  stat_different_colors_count
+  stat_different_colors
 ]
 
 
@@ -28,22 +32,67 @@ to setup
 
   set humanTalkCount 0
   set robotTalkCount 0
+  set stat_number_of_robot_words 0
+  set stat_different_colors_count 0
+  set stat_different_colors []
 
   reset-ticks
+  clear-all-plots
 end
 
 to go
+
   talk
   color-humans
-  updateFullDicts
+  updateFullStats
+  plotColors
   tick
+  if (length stat_different_colors) = 1 [
+     stop
+  ]
 end
 
-to updateFullDicts
+to updateFullStats
   set fullDicts []
-  ask humans[
+  ask humans with [is-robot = false][
     foreach dictionary [ set fullDicts lput ? fullDicts ]
   ]
+
+  ;;calulate how many percent use robot word
+  set stat_number_of_robot_words 0
+  ask humans with [is-robot = false][
+    if (member? 136 dictionary)[
+       set stat_number_of_robot_words stat_number_of_robot_words + 1
+    ]
+  ]
+  set stat_number_of_robot_words 100 * stat_number_of_robot_words / count humans with [is-robot = false]
+
+  ;;calcualte how many differnt colors are in the network
+  set stat_different_colors_count 0
+  set stat_different_colors []
+  ask humans with [is-robot = false][
+     if not (member? color stat_different_colors)[
+       set stat_different_colors lput color stat_different_colors
+    ]
+  ]
+
+end
+
+to plotColors
+  set-current-plot "Colors"
+
+  ;create plot pens from all colors we have
+  ;fullDicts
+  ;stat_different_colors
+  foreach stat_different_colors [
+    let s ?
+    let l length (filter [? = s] fullDicts)
+    let sw word "" s
+    create-temporary-plot-pen sw
+    set-plot-pen-color s
+    plot l
+  ]
+
 end
 
 to talk
@@ -134,9 +183,9 @@ to createNetwork
 ;    set dictionary []
 ;  ]
 ;
+  let network "AdHealthForNetLogo/karate.gml"
 
-
-  nw:load-gml "AdHealthForNetLogo/karate.gml" humans friendships [
+  nw:load-gml network humans friendships [
     set color gray
     set is-robot false
     set robot-connection 0
@@ -433,7 +482,7 @@ Robots?
 Robots?
 0
 10
-4
+1
 1
 1
 NIL
@@ -467,13 +516,12 @@ NIL
 0.0
 10.0
 0.0
-10.0
+2.0
 true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot length fullDicts"
-"pen-1" 1.0 0 -8020277 true "" "plot length [color] of turtles"
+"pen-1" 1.0 0 -4699768 true "" "plot length fullDicts / count humans with [is-robot = false]"
 
 PLOT
 664
@@ -491,7 +539,8 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "histogram [color] of turtles"
+"pen-1" 1.0 0 -7500403 true "" "plot length fullDicts"
+"robot words" 1.0 0 -1264960 true "" "plot stat_number_of_robot_words"
 
 BUTTON
 20
@@ -510,25 +559,6 @@ NIL
 NIL
 1
 
-PLOT
-684
-362
-884
-512
-Randomness
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-true
-"" ""
-PENS
-"Human" 1.0 0 -13840069 true "" "plot humanTalkCount"
-"Robot" 1.0 0 -13345367 true "" "plot robotTalkCount"
-
 CHOOSER
 16
 291
@@ -538,6 +568,41 @@ centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
 1
+
+PLOT
+665
+329
+865
+479
+diff colors
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"diff colors" 1.0 0 -16777216 true "" "plot length stat_different_colors"
+
+PLOT
+888
+10
+1088
+160
+Colors
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -886,6 +951,22 @@ NetLogo 5.3.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="Humans?">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="centrality">
+      <value value="&quot;betweenness-centrality&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Robots?">
+      <value value="10"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
