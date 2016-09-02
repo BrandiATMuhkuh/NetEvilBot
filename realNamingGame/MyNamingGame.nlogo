@@ -20,7 +20,10 @@ globals [
   stat_different_colors
 
   stat_gen_robot_percent
-  stat_5000_first
+  stat_1000_robot_percent
+  stat_1000_remaining_colors
+  stat_2500_robot_percent
+  stat_2500_remaining_colors
   stat_5000_robot_percent
   stat_5000_remaining_colors
 ]
@@ -90,6 +93,16 @@ to updateFullStats
   if (ticks < 5000)[
     set stat_5000_robot_percent stat_number_of_robot_words
     set stat_5000_remaining_colors length stat_different_colors
+  ]
+
+  if (ticks < 2500)[
+    set stat_2500_robot_percent stat_number_of_robot_words
+    set stat_2500_remaining_colors length stat_different_colors
+  ]
+
+  if (ticks < 1000)[
+    set stat_1000_robot_percent stat_number_of_robot_words
+    set stat_1000_remaining_colors length stat_different_colors
   ]
 
 end
@@ -393,7 +406,7 @@ Robots?
 Robots?
 0
 33
-3
+2
 1
 1
 NIL
@@ -478,7 +491,7 @@ CHOOSER
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
-0
+3
 
 PLOT
 665
@@ -896,19 +909,28 @@ NetLogo 5.3.1
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="experiment" repetitions="1" runMetricsEveryStep="false">
+  <experiment name="experiment" repetitions="100" runMetricsEveryStep="false">
     <setup>setup
 add-robots</setup>
     <go>go</go>
-    <metric>stat_gen_robot_percent</metric>
-    <metric>stat_5000_first</metric>
+    <metric>stat_1000_robot_percent</metric>
+    <metric>stat_1000_remaining_colors</metric>
+    <metric>stat_2500_robot_percent</metric>
+    <metric>stat_2500_remaining_colors</metric>
     <metric>stat_5000_robot_percent</metric>
     <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_gen_robot_percent</metric>
     <enumeratedValueSet variable="centrality">
       <value value="&quot;random&quot;"/>
+      <value value="&quot;betweenness-centrality&quot;"/>
+      <value value="&quot;page-rank&quot;"/>
+      <value value="&quot;closeness-centrality&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="Robots?">
-      <value value="3"/>
+      <value value="0"/>
+      <value value="2"/>
+      <value value="15"/>
+      <value value="29"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
