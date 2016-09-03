@@ -933,7 +933,7 @@ add-robots</setup>
       <value value="29"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="experiment 1 3 4 9" repetitions="100" runMetricsEveryStep="false">
+  <experiment name="experiment_1_3_4_9" repetitions="100" runMetricsEveryStep="false">
     <setup>setup
 add-robots</setup>
     <go>go</go>
