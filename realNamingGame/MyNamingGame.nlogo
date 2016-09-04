@@ -374,7 +374,7 @@ Humans?
 Humans?
 2
 100
-11
+4
 1
 1
 NIL
@@ -406,7 +406,7 @@ Robots?
 Robots?
 0
 33
-29
+5
 1
 1
 NIL
@@ -955,6 +955,34 @@ add-robots</setup>
       <value value="3"/>
       <value value="4"/>
       <value value="9"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_long" repetitions="1000" runMetricsEveryStep="false">
+    <setup>setup
+add-robots</setup>
+    <go>go</go>
+    <metric>stat_1000_robot_percent</metric>
+    <metric>stat_1000_remaining_colors</metric>
+    <metric>stat_2500_robot_percent</metric>
+    <metric>stat_2500_remaining_colors</metric>
+    <metric>stat_5000_robot_percent</metric>
+    <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_gen_robot_percent</metric>
+    <enumeratedValueSet variable="centrality">
+      <value value="&quot;random&quot;"/>
+      <value value="&quot;betweenness-centrality&quot;"/>
+      <value value="&quot;page-rank&quot;"/>
+      <value value="&quot;closeness-centrality&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Robots?">
+      <value value="0"/>
+      <value value="1"/>
+      <value value="2"/>
+      <value value="3"/>
+      <value value="4"/>
+      <value value="9"/>
+      <value value="15"/>
+      <value value="29"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
