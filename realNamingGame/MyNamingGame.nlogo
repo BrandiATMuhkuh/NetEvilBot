@@ -6,6 +6,13 @@ humans-own [
   dictionary
   is-robot ;define if node is robot or not
   robot-connection;
+  CLASSNAME
+  GENDER
+]
+
+friendships-own [
+  DURATION
+  COUNTS
 ]
 
 globals [
@@ -219,13 +226,23 @@ to createNetwork
 ;    set dictionary []
 ;  ]
 ;
-  let network "AdHealthForNetLogo/karate.gml"
 
-  nw:load-gml network humans friendships [
+  ifelse (data = "karate") [
+     nw:load-gml "AdHealthForNetLogo/karate.gml" humans friendships
+  ][
+     nw:load-gexf "AdHealthForNetLogo/sp_data_school_day_1_g.gexf" humans friendships
+  ]
+
+
+  ask humans [
     set color gray
     set is-robot false
     set robot-connection 0
     set dictionary []
+  ]
+
+  ask friendships [
+    set hidden? true
   ]
 end
 
@@ -235,7 +252,7 @@ to layout
 end
 
 to add-robots
-  create-add-robot Robots?
+  create-add-robot round ((count humans) / 100 * Robots?)
 ;  robot-setup-nodes Robots?
 ;  robot-add-nodes Robots?
 end
@@ -366,10 +383,10 @@ NIL
 1
 
 SLIDER
-16
-161
-188
-194
+29
+490
+201
+523
 Humans?
 Humans?
 2
@@ -398,25 +415,25 @@ NIL
 1
 
 SLIDER
-15
-247
-187
-280
+20
+157
+192
+190
 Robots?
 Robots?
 0
 33
-5
+14
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-16
-205
-130
-238
+29
+534
+143
+567
 NIL
 add-robots
 NIL
@@ -484,10 +501,10 @@ NIL
 1
 
 CHOOSER
-16
-291
-189
-336
+18
+199
+191
+244
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
@@ -514,7 +531,7 @@ PENS
 PLOT
 888
 10
-1794
+1118
 483
 Colors
 NIL
@@ -560,6 +577,33 @@ stat_5000_remaining_colors
 17
 1
 11
+
+BUTTON
+25
+264
+150
+297
+layout-spring
+layout-spring turtles links 0.2 5 1
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+CHOOSER
+26
+315
+194
+360
+data
+data
+"karate" "classroom"
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
