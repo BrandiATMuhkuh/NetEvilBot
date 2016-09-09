@@ -422,7 +422,7 @@ SLIDER
 Robots?
 Robots?
 0
-33
+100
 14
 1
 1
@@ -603,7 +603,7 @@ CHOOSER
 data
 data
 "karate" "classroom"
-0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1027,6 +1027,39 @@ add-robots</setup>
       <value value="9"/>
       <value value="15"/>
       <value value="29"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_classroom" repetitions="1000" runMetricsEveryStep="false">
+    <setup>setup
+add-robots</setup>
+    <go>go</go>
+    <exitCondition>ticks &gt; 100000</exitCondition>
+    <metric>stat_1000_robot_percent</metric>
+    <metric>stat_1000_remaining_colors</metric>
+    <metric>stat_2500_robot_percent</metric>
+    <metric>stat_2500_remaining_colors</metric>
+    <metric>stat_5000_robot_percent</metric>
+    <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_gen_robot_percent</metric>
+    <metric>ticks</metric>
+    <enumeratedValueSet variable="centrality">
+      <value value="&quot;random&quot;"/>
+      <value value="&quot;betweenness-centrality&quot;"/>
+      <value value="&quot;page-rank&quot;"/>
+      <value value="&quot;closeness-centrality&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Robots?">
+      <value value="0"/>
+      <value value="3"/>
+      <value value="6"/>
+      <value value="9"/>
+      <value value="11"/>
+      <value value="26"/>
+      <value value="44"/>
+      <value value="85"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="data">
+      <value value="&quot;classroom&quot;"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
