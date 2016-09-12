@@ -74,7 +74,7 @@ conditions[5]="experiment_classroom"
 
 
 #for i in "${servers[@]}"
-for (( c=0; c<1; c++ ))
+for (( c=0; c<6; c++ ))
 do
 
 
@@ -105,6 +105,12 @@ do
 	else
 	   echo "specify deploy or downlaod"
 	fi
-
-
 done
+
+#combine download
+tail -n +7 "runs/${timestamp}_experiment_classroom.0.csv" > "runs/${timestamp}_full.csv"
+tail -n +8 "runs/${timestamp}_experiment_classroom.1.csv" >> "runs/${timestamp}_full.csv"
+tail -n +8 "runs/${timestamp}_experiment_classroom.2.csv" >> "runs/${timestamp}_full.csv"
+tail -n +8 "runs/${timestamp}_experiment_classroom.3.csv" >> "runs/${timestamp}_full.csv"
+tail -n +8 "runs/${timestamp}_experiment_classroom.4.csv" >> "runs/${timestamp}_full.csv"
+tail -n +8 "runs/${timestamp}_experiment_classroom.5.csv" >> "runs/${timestamp}_full.csv"
