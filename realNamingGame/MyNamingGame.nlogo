@@ -243,7 +243,7 @@ to createNetwork
   ]
 
   ask friendships [
-    set hidden? true
+    set hidden? false
   ]
 end
 
