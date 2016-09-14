@@ -239,6 +239,7 @@ to createNetwork
     set is-robot false
     set robot-connection 0
     set dictionary []
+    set label ""
   ]
 
   ask friendships [
@@ -300,6 +301,41 @@ to create-add-robot [ num-robots ]
      ;Connect to random node
      create-friendship-with item robotCount nodesort
      set robotCount robotCount + 1
+  ]
+
+end
+
+
+to showCentrality
+
+
+  let nodesort sort-on [1 - nw:closeness-centrality] humans
+
+  let input_start 1
+  let input_end 5
+
+  ;get min/max data
+  ask item 0 nodesort[
+     set input_end nw:closeness-centrality
+  ]
+
+  ask item (length nodesort - 1) nodesort[
+     set input_start nw:closeness-centrality
+  ]
+
+
+  show input_start
+  show input_end
+
+
+  ask humans[
+     set color palette:scale-gradient [[255 0 0] [0 0 255]] nw:closeness-centrality input_end input_start
+  ]
+
+  ;repeat 1000 [layout-spring turtles links 0.1 8 3]
+
+  ask friendships[
+     set hidden? false
   ]
 
 end
@@ -423,7 +459,7 @@ Robots?
 Robots?
 0
 100
-14
+0
 1
 1
 NIL
@@ -584,7 +620,7 @@ BUTTON
 150
 297
 layout-spring
-layout-spring turtles links 0.2 5 1
+layout-spring turtles links 0.1 9 3
 T
 1
 T
@@ -603,6 +639,23 @@ CHOOSER
 data
 data
 "karate" "classroom"
+0
+
+BUTTON
+463
+495
+599
+528
+NIL
+showCentrality
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 1
 
 @#$#@#$#@
