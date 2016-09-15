@@ -243,7 +243,7 @@ to createNetwork
   ]
 
   ask friendships [
-    set hidden? false
+    set hidden? true
   ]
 end
 
@@ -295,7 +295,7 @@ to create-add-robot [ num-robots ]
   ]
 
 
-  let robotCount 0
+  let robotCount round ((count humans) / 100 * RobotOffset)
   ask humans with [is-robot = true and robot-connection = 0][
 
      ;Connect to random node
@@ -335,7 +335,7 @@ to showCentrality
   ;repeat 1000 [layout-spring turtles links 0.1 8 3]
 
   ask friendships[
-     set hidden? false
+     set hidden? true
   ]
 
 end
@@ -459,7 +459,7 @@ Robots?
 Robots?
 0
 100
-0
+3
 1
 1
 NIL
@@ -544,7 +544,7 @@ CHOOSER
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
-3
+1
 
 PLOT
 665
@@ -639,7 +639,7 @@ CHOOSER
 data
 data
 "karate" "classroom"
-0
+1
 
 BUTTON
 463
@@ -657,6 +657,21 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+24
+373
+174
+406
+RobotOffset
+RobotOffset
+0
+100
+0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1110,6 +1125,38 @@ add-robots</setup>
       <value value="26"/>
       <value value="44"/>
       <value value="85"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="data">
+      <value value="&quot;classroom&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_robotOffset" repetitions="1000" runMetricsEveryStep="false">
+    <setup>setup
+add-robots</setup>
+    <go>go</go>
+    <exitCondition>ticks &gt; 100000</exitCondition>
+    <metric>stat_1000_robot_percent</metric>
+    <metric>stat_1000_remaining_colors</metric>
+    <metric>stat_2500_robot_percent</metric>
+    <metric>stat_2500_remaining_colors</metric>
+    <metric>stat_5000_robot_percent</metric>
+    <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_gen_robot_percent</metric>
+    <metric>ticks</metric>
+    <enumeratedValueSet variable="centrality">
+      <value value="&quot;betweenness-centrality&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Robots?">
+      <value value="3"/>
+      <value value="6"/>
+      <value value="9"/>
+      <value value="11"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="RobotOffset">
+      <value value="0"/>
+      <value value="25"/>
+      <value value="50"/>
+      <value value="75"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="data">
       <value value="&quot;classroom&quot;"/>

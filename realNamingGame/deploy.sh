@@ -65,12 +65,12 @@ servers[3]="cumin.phon.ox.ac.uk"
 servers[4]="wasabi.phon.ox.ac.uk"
 servers[5]="clove.phon.ox.ac.uk"
 
-conditions[0]="experiment_classroom"
-conditions[1]="experiment_classroom"
-conditions[2]="experiment_classroom"
-conditions[3]="experiment_classroom"
-conditions[4]="experiment_classroom"
-conditions[5]="experiment_classroom"
+conditions[0]="experiment_robotOffset"
+conditions[1]="experiment_robotOffset"
+conditions[2]="experiment_robotOffset"
+conditions[3]="experiment_robotOffset"
+conditions[4]="experiment_robotOffset"
+conditions[5]="experiment_robotOffset"
 
 
 #for i in "${servers[@]}"
@@ -94,8 +94,8 @@ do
 		 echo "Create 'outputFolder' if not existing"
 		 ssh "$username@${servers[$c]}" 'mkdir realNamingGame'
 
-		 echo "Upload MyNamingGame.nlogo"
-		 scp -r "AdHealthForNetLogo" "$username@${servers[$c]}:~/realNamingGame/"
+		 #echo "Upload MyNamingGame.nlogo"
+		 #scp -r "AdHealthForNetLogo" "$username@${servers[$c]}:~/realNamingGame/"
 		 scp "MyNamingGame.nlogo" "$username@${servers[$c]}:~/realNamingGame/MyNamingGame.nlogo"
 
 		 echo "start screen and process on remote server"
@@ -107,10 +107,13 @@ do
 	fi
 done
 
-#combine download
-tail -n +7 "runs/${timestamp}_experiment_classroom.0.csv" > "runs/${timestamp}_full.csv"
-tail -n +8 "runs/${timestamp}_experiment_classroom.1.csv" >> "runs/${timestamp}_full.csv"
-tail -n +8 "runs/${timestamp}_experiment_classroom.2.csv" >> "runs/${timestamp}_full.csv"
-tail -n +8 "runs/${timestamp}_experiment_classroom.3.csv" >> "runs/${timestamp}_full.csv"
-tail -n +8 "runs/${timestamp}_experiment_classroom.4.csv" >> "runs/${timestamp}_full.csv"
-tail -n +8 "runs/${timestamp}_experiment_classroom.5.csv" >> "runs/${timestamp}_full.csv"
+if [ "$BEHAVIOR" == "download" ]
+	then
+	#combine download
+	tail -n +7 "runs/${timestamp}_experiment_classroom.0.csv" > "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_experiment_classroom.1.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_experiment_classroom.2.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_experiment_classroom.3.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_experiment_classroom.4.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_experiment_classroom.5.csv" >> "runs/${timestamp}_full.csv"
+fi
