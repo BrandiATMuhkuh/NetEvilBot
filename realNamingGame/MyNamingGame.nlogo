@@ -33,6 +33,8 @@ globals [
   stat_2500_remaining_colors
   stat_5000_robot_percent
   stat_5000_remaining_colors
+  stat_37351_robot_percent
+  stat_37351_remaining_colors
 ]
 
 
@@ -40,7 +42,8 @@ globals [
 to setup
   clear-all
   set fullDicts []
-  set dicSet [16 26 36 46 56 66 76 86 96 106 116 126]
+  set dicSet [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 26 36 46 56 66 76 86 96 106 116 126]
+  set dicSet n-values 120[ ? + 1 ]
   ask patches [ set pcolor white ]
   set-default-shape humans "circle"
   createNetwork
@@ -112,6 +115,12 @@ to updateFullStats
     set stat_1000_remaining_colors length stat_different_colors
   ]
 
+  if (ticks < 37351)[
+    set stat_37351_robot_percent stat_number_of_robot_words
+    set stat_37351_remaining_colors length stat_different_colors
+  ]
+
+
 end
 
 to plotColors
@@ -154,7 +163,6 @@ to talk
          set humanTalkCount humanTalkCount + 1
       ]
 
-
       if empty? dictionary[;if talkers dictionary is empty we need to add an element
          set dictionary lput (item 0 (shuffle dicSet)) dictionary
       ]
@@ -171,10 +179,33 @@ to talk
     ask receiver[
 
       ifelse member? sayWord dictionary or empty? dictionary[;success
+
         ;Listerner empties dictionary and adds the success word
         if is-robot = false[
-           set dictionary []
-           set dictionary lput sayWord dictionary
+
+           ;If the taker is a robot, the receiver learn from the robot only to a curtain degree/percentage
+           let temp_dict dictionary
+
+           ask talker[
+
+             let bias random-normal 38.92 18.65 ; set bias to as if this would be a robot
+
+             if is-robot = false[;in case the talker is a human. use human distribution
+               set bias random-normal 61.12 20.53
+             ]
+
+             ifelse random 100 < bias[;the human picks the robot word
+                 set temp_dict []
+                 set temp_dict lput sayWord temp_dict
+               ][
+                 set temp_dict lput sayWord temp_dict ;just add robot word to dicitonary
+               ]
+
+           ]
+
+           set dictionary temp_dict
+
+
         ]
 
         ;ask talker to do as listener
@@ -427,7 +458,7 @@ Humans?
 Humans?
 2
 100
-4
+2
 1
 1
 NIL
@@ -459,7 +490,7 @@ Robots?
 Robots?
 0
 100
-3
+18
 1
 1
 NIL
@@ -544,7 +575,7 @@ CHOOSER
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
-1
+0
 
 PLOT
 665
@@ -639,7 +670,7 @@ CHOOSER
 data
 data
 "karate" "classroom"
-1
+0
 
 BUTTON
 463
@@ -1031,6 +1062,8 @@ add-robots</setup>
     <metric>stat_2500_remaining_colors</metric>
     <metric>stat_5000_robot_percent</metric>
     <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_37351_robot_percent</metric>
+    <metric>stat_37351_remaining_colors</metric>
     <metric>stat_gen_robot_percent</metric>
     <enumeratedValueSet variable="centrality">
       <value value="&quot;random&quot;"/>
@@ -1055,6 +1088,8 @@ add-robots</setup>
     <metric>stat_2500_remaining_colors</metric>
     <metric>stat_5000_robot_percent</metric>
     <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_37351_robot_percent</metric>
+    <metric>stat_37351_remaining_colors</metric>
     <metric>stat_gen_robot_percent</metric>
     <enumeratedValueSet variable="centrality">
       <value value="&quot;random&quot;"/>
@@ -1079,6 +1114,8 @@ add-robots</setup>
     <metric>stat_2500_remaining_colors</metric>
     <metric>stat_5000_robot_percent</metric>
     <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_37351_robot_percent</metric>
+    <metric>stat_37351_remaining_colors</metric>
     <metric>stat_gen_robot_percent</metric>
     <enumeratedValueSet variable="centrality">
       <value value="&quot;random&quot;"/>
@@ -1108,6 +1145,8 @@ add-robots</setup>
     <metric>stat_2500_remaining_colors</metric>
     <metric>stat_5000_robot_percent</metric>
     <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_37351_robot_percent</metric>
+    <metric>stat_37351_remaining_colors</metric>
     <metric>stat_gen_robot_percent</metric>
     <metric>ticks</metric>
     <enumeratedValueSet variable="centrality">
@@ -1141,6 +1180,8 @@ add-robots</setup>
     <metric>stat_2500_remaining_colors</metric>
     <metric>stat_5000_robot_percent</metric>
     <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_37351_robot_percent</metric>
+    <metric>stat_37351_remaining_colors</metric>
     <metric>stat_gen_robot_percent</metric>
     <metric>ticks</metric>
     <enumeratedValueSet variable="centrality">

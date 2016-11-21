@@ -65,12 +65,13 @@ servers[3]="cumin.phon.ox.ac.uk"
 servers[4]="wasabi.phon.ox.ac.uk"
 servers[5]="clove.phon.ox.ac.uk"
 
-conditions[0]="experiment_robotOffset"
-conditions[1]="experiment_robotOffset"
-conditions[2]="experiment_robotOffset"
-conditions[3]="experiment_robotOffset"
-conditions[4]="experiment_robotOffset"
-conditions[5]="experiment_robotOffset"
+conditionName = "experiment_robotOffset_bias"
+conditions[0]=conditionName
+conditions[1]=conditionName
+conditions[2]=conditionName
+conditions[3]=conditionName
+conditions[4]=conditionName
+conditions[5]=conditionName
 
 
 #for i in "${servers[@]}"
@@ -110,10 +111,10 @@ done
 if [ "$BEHAVIOR" == "download" ]
 	then
 	#combine download
-	tail -n +7 "runs/${timestamp}_experiment_classroom.0.csv" > "runs/${timestamp}_full.csv"
-	tail -n +8 "runs/${timestamp}_experiment_classroom.1.csv" >> "runs/${timestamp}_full.csv"
-	tail -n +8 "runs/${timestamp}_experiment_classroom.2.csv" >> "runs/${timestamp}_full.csv"
-	tail -n +8 "runs/${timestamp}_experiment_classroom.3.csv" >> "runs/${timestamp}_full.csv"
-	tail -n +8 "runs/${timestamp}_experiment_classroom.4.csv" >> "runs/${timestamp}_full.csv"
-	tail -n +8 "runs/${timestamp}_experiment_classroom.5.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +7 "runs/${timestamp}_${conditions[0]}.0.csv" > "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_${conditions[1]}.1.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_${conditions[2]}.2.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_${conditions[3]}.3.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_${conditions[4]}.4.csv" >> "runs/${timestamp}_full.csv"
+	tail -n +8 "runs/${timestamp}_${conditions[5]}.5.csv" >> "runs/${timestamp}_full.csv"
 fi
