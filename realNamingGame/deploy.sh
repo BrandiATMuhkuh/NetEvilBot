@@ -65,13 +65,13 @@ servers[3]="cumin.phon.ox.ac.uk"
 servers[4]="wasabi.phon.ox.ac.uk"
 servers[5]="clove.phon.ox.ac.uk"
 
-conditionName = "experiment_robotOffset_bias"
-conditions[0]=conditionName
-conditions[1]=conditionName
-conditions[2]=conditionName
-conditions[3]=conditionName
-conditions[4]=conditionName
-conditions[5]=conditionName
+conditionName="experiment_robotOffset_bias"
+conditions[0]=$conditionName
+conditions[1]=$conditionName
+conditions[2]=$conditionName
+conditions[3]=$conditionName
+conditions[4]=$conditionName
+conditions[5]=$conditionName
 
 
 #for i in "${servers[@]}"
@@ -95,12 +95,13 @@ do
 		 echo "Create 'outputFolder' if not existing"
 		 ssh "$username@${servers[$c]}" 'mkdir realNamingGame'
 
-		 #echo "Upload MyNamingGame.nlogo"
-		 #scp -r "AdHealthForNetLogo" "$username@${servers[$c]}:~/realNamingGame/"
 		 scp "MyNamingGame.nlogo" "$username@${servers[$c]}:~/realNamingGame/MyNamingGame.nlogo"
 
 		 echo "start screen and process on remote server"
-		 ssh "$username@${servers[$c]}" "screen -d -m -S jbrandserver bash -c './headlessStart_naming.sh -b ${conditions[$c]}'"
+		 SSHTHIS="ssh $username@${servers[$c]} \"screen -d -m -S jbrandsetter bash -c './headlessStart_naming.sh -b ${conditions[$c]}'\""
+		 echo $SSHTHIS
+		 eval $SSHTHIS
+		 ##ssh "$username@${servers[$c]}" "screen -d -m -S jbrandsetter bash -c './headlessStart_naming.sh -b ${conditions[$c]}'"
 
 
 	else

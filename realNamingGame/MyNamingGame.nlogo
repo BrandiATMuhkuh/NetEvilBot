@@ -16,6 +16,7 @@ friendships-own [
 ]
 
 globals [
+  histDicts
   dicSet
   fullDicts
   humanTalkCount
@@ -42,8 +43,9 @@ globals [
 to setup
   clear-all
   set fullDicts []
-  set dicSet [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 26 36 46 56 66 76 86 96 106 116 126]
-  set dicSet n-values 120[ ? + 1 ]
+  set histDicts []
+  set dicSet [16 26 36 46 56 66 76 86 96 106 116 126]
+  ;set dicSet n-values 120[ ? + 1 ]
   ask patches [ set pcolor white ]
   set-default-shape humans "circle"
   createNetwork
@@ -70,6 +72,15 @@ to go
   if (length stat_different_colors) = 1 [
      stop
   ]
+
+  if (ticks > 1000)  [
+    if ( (item 0 sort-by > histDicts) = 100 )[
+      stop
+    ]
+    ;stop
+  ]
+
+  ;if (stat_number_of_robot_words)
 end
 
 to updateFullStats
@@ -77,6 +88,30 @@ to updateFullStats
   ask humans with [is-robot = false][
     foreach dictionary [ set fullDicts lput ? fullDicts ]
   ]
+
+  ;;calc histogram of accurding words
+  ;;create new word list that also contains the robot word
+  let plusRobotDicSet dicSet
+  set plusRobotDicSet lput 136 plusRobotDicSet
+  set histDicts []
+  foreach plusRobotDicSet[
+     let c 0
+     let dictWord ?
+     foreach fulldicts[
+        if(? = dictWord)[
+           set c c + 1
+        ]
+
+     ]
+
+     set c c * 100 / length fulldicts
+
+     set histDicts lput c histDicts
+     ;show dictWord
+     ;show c
+  ]
+
+
 
   ;;calulate how many percent use robot word
   set stat_number_of_robot_words 0
@@ -490,7 +525,7 @@ Robots?
 Robots?
 0
 100
-18
+10
 1
 1
 NIL
@@ -530,6 +565,7 @@ false
 "" ""
 PENS
 "pen-1" 1.0 0 -4699768 true "" "plot length fullDicts / count humans with [is-robot = false]"
+"pen-2" 1.0 0 -7500403 true "" "plot length fullDicts / count humans"
 
 PLOT
 664
@@ -575,7 +611,7 @@ CHOOSER
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
-0
+1
 
 PLOT
 665
@@ -670,7 +706,7 @@ CHOOSER
 data
 data
 "karate" "classroom"
-0
+1
 
 BUTTON
 463
@@ -698,11 +734,40 @@ RobotOffset
 RobotOffset
 0
 100
-0
+75
 1
 1
 NIL
 HORIZONTAL
+
+MONITOR
+341
+558
+546
+603
+average dict count
+length fullDicts / count humans with [is-robot = false]
+17
+1
+11
+
+PLOT
+614
+494
+814
+644
+plot 2
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "if (length histDicts > 0 and ticks > 100)[plot item 0 sort-by > histDicts]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1185,6 +1250,41 @@ add-robots</setup>
     <metric>stat_gen_robot_percent</metric>
     <metric>ticks</metric>
     <enumeratedValueSet variable="centrality">
+      <value value="&quot;betweenness-centrality&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Robots?">
+      <value value="3"/>
+      <value value="6"/>
+      <value value="9"/>
+      <value value="11"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="RobotOffset">
+      <value value="0"/>
+      <value value="25"/>
+      <value value="50"/>
+      <value value="75"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="data">
+      <value value="&quot;classroom&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment_robotOffset_bias" repetitions="100" runMetricsEveryStep="false">
+    <setup>setup
+add-robots</setup>
+    <go>go</go>
+    <exitCondition>ticks &gt; 100000</exitCondition>
+    <metric>stat_1000_robot_percent</metric>
+    <metric>stat_1000_remaining_colors</metric>
+    <metric>stat_2500_robot_percent</metric>
+    <metric>stat_2500_remaining_colors</metric>
+    <metric>stat_5000_robot_percent</metric>
+    <metric>stat_5000_remaining_colors</metric>
+    <metric>stat_37351_robot_percent</metric>
+    <metric>stat_37351_remaining_colors</metric>
+    <metric>stat_gen_robot_percent</metric>
+    <metric>ticks</metric>
+    <enumeratedValueSet variable="centrality">
+      <value value="&quot;random&quot;"/>
       <value value="&quot;betweenness-centrality&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="Robots?">
