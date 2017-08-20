@@ -1,4 +1,4 @@
-extensions [ palette nw ]
+extensions [ palette nw csv]
 breed [ humans human ]
 undirected-link-breed [ friendships friendship ]
 
@@ -86,7 +86,7 @@ end
 to updateFullStats
   set fullDicts []
   ask humans with [is-robot = false][
-    foreach dictionary [ set fullDicts lput ? fullDicts ]
+    foreach dictionary [ ?1 -> set fullDicts lput ?1 fullDicts ]
   ]
 
   ;;calc histogram of accurding words
@@ -94,11 +94,11 @@ to updateFullStats
   let plusRobotDicSet dicSet
   set plusRobotDicSet lput 136 plusRobotDicSet
   set histDicts []
-  foreach plusRobotDicSet[
+  foreach plusRobotDicSet[ ?1 ->
      let c 0
-     let dictWord ?
-     foreach fulldicts[
-        if(? = dictWord)[
+     let dictWord ?1
+     foreach fulldicts[ ??1 ->
+        if(??1 = dictWord)[
            set c c + 1
         ]
 
@@ -164,10 +164,10 @@ to plotColors
   ;create plot pens from all colors we have
   ;fullDicts
   ;stat_different_colors
-  foreach stat_different_colors [
-    if not (? = 136)[
-      let s ?
-      let l length (filter [? = s] fullDicts)
+  foreach stat_different_colors [ ?1 ->
+    if not (?1 = 136)[
+      let s ?1
+      let l length (filter [ ??1 -> ??1 = s ] fullDicts)
       let sw word "" s
       create-temporary-plot-pen sw
       set-plot-pen-color s
@@ -405,14 +405,56 @@ to showCentrality
   ]
 
 end
+
+to saveCentralitiesInCsv
+
+  let betweenness sort-on [1 - nw:betweenness-centrality] humans with [is-robot = false]
+  let closeness   sort-on [1 - nw:closeness-centrality] humans with [is-robot = false]
+  let pageRank    sort-on [1 - nw:page-rank] humans with [is-robot = false]
+
+  let bList ["betweenness"]
+  let bListF ["betweenness"]
+  let cList ["closeness"]
+  let cListF ["closeness"]
+  let pList ["pageRank"]
+  let pListF ["pageRank"]
+
+
+
+
+  foreach  betweenness [ x ->  ask x [
+    set bList lput who bList
+    set bListF lput count friendship-neighbors bListF
+  ] ]
+  foreach  closeness [ x ->  ask x [
+    set cList lput who cList
+    set cListF lput count friendship-neighbors cListF
+  ] ]
+
+  foreach  pageRank [ x ->  ask x [
+    set pList lput who pList
+    set pListF lput count friendship-neighbors pListF
+  ] ]
+
+; set bList lput who
+
+  show csv:to-row bList
+  show csv:to-row bListF
+  show csv:to-row cList
+  show csv:to-row cListF
+  show csv:to-row pList
+  show csv:to-row pListF
+
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-649
-470
-16
-16
+647
+448
+-1
+-1
 13.0
 1
 10
@@ -493,7 +535,7 @@ Humans?
 Humans?
 2
 100
-2
+2.0
 1
 1
 NIL
@@ -525,7 +567,7 @@ Robots?
 Robots?
 0
 100
-10
+0.0
 1
 1
 NIL
@@ -611,7 +653,7 @@ CHOOSER
 centrality
 centrality
 "random" "betweenness-centrality" "page-rank" "closeness-centrality"
-1
+3
 
 PLOT
 665
@@ -734,7 +776,7 @@ RobotOffset
 RobotOffset
 0
 100
-75
+75.0
 1
 1
 NIL
@@ -1110,9 +1152,8 @@ false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.3.1
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -1316,7 +1357,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
